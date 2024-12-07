@@ -44,9 +44,17 @@ int main(){
     cout << "Welcome to Limbinal!" << endl;
     cout << "What is your name?" << endl;
     string name;
-    cin >> name;
-    player.setName(name);
-    cout << "Hello " << player.getName() << "!" << endl;
+    try {
+        cin >> name;
+        if (cin.fail()) {
+            throw runtime_error("Invalid input for name.");
+        }
+        player.setName(name);
+        cout << "Hello " << player.getName() << "!" << endl;
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+        return 1;
+    }
     cout << "Instructions: " << endl;
     cout << "You are in a house. You can rest here." << endl;
     cout << "You can move to different locations by typing the direction you want to go." << endl;

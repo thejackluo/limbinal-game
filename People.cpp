@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <algorithm>
 
 #include "Item.cpp"
 #include "Event.cpp"
@@ -17,6 +18,19 @@ public:
 
     People(string name, int health, int energy, int mem, int money)
         : name(name), health(health), energy(energy), mem(mem), money(money) {}
+
+    virtual ~People() {}
+
+    People& operator=(const People& other) {
+        if (this != &other) {
+            name = other.name;
+            health = other.health;
+            energy = other.energy;
+            mem = other.mem;
+            money = other.money;
+        }
+        return *this;
+    }
 
     void setName(string name) {
         this->name = name;
@@ -57,26 +71,24 @@ public:
         inventory.push_back(item);
     }
 
-    void removeItem(string itemName) {
-        for (auto it = inventory.begin(); it != inventory.end(); ++it) {
-            if (it->getName() == itemName) {
-                inventory.erase(it);
-                return;
-            }
+    void removeItem(const Item& item) {
+        auto it = std::find(inventory.begin(), inventory.end(), item);
+        if (it != inventory.end()) {
+            inventory.erase(it);
+        } else {
+            cout << "Item not found in inventory!" << endl;
         }
-        cout << "Item not found in inventory!" << endl;
     }
 
-    void useItem(string itemName) {
-        for (auto it = inventory.begin(); it != inventory.end(); ++it) {
-            if (it->getName() == itemName) {
-                cout << "Using item: " << itemName << endl;
-                modifyStats(it->getHealthEffect(), it->getEnergyEffect(), 0, 0);
-                inventory.erase(it);
-                return;
-            }
+    void useItem(const Item& item) {
+        auto it = std::find(inventory.begin(), inventory.end(), item);
+        if (it != inventory.end()) {
+            cout << "Using item: " << item.getName() << endl;
+            modifyStats(item.getValue(), 0, 0, 0);
+            inventory.erase(it);
+        } else {
+            cout << "Item not found in inventory!" << endl;
         }
-        cout << "Item not found in inventory!" << endl;
     }
 
     void displayStats() const override {
@@ -90,6 +102,18 @@ public:
             }
             cout << endl;
         }
+    }
+
+    void sortInventoryById() {
+        sort(inventory.begin(), inventory.end(), [](const Item& a, const Item& b) {
+            return a.getId() < b.getId();
+        });
+    }
+
+    void sortInventoryByName() {
+        sort(inventory.begin(), inventory.end(), [](const Item& a, const Item& b) {
+            return a.getName() < b.getName();
+        });
     }
 };
 
@@ -120,6 +144,7 @@ public:
     }
 };
 
+// Archived code
     // void attack(Player& player) {
     //     int damage = rand() % 10 + 1;
     //     cout << name << " attacks " << player.getName() << " for " << damage << " damage!" << endl;

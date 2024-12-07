@@ -33,9 +33,9 @@ Event createGiveEvent(NPC& npc, Player& player) {
                 cout << npc.getName() << " gives " << amount << " money to " << player.getName() << "!" << endl;
                 player.modifyStats(0, 0, 0, amount);
             } else {
-                Item gift("Health Potion", 20, 0);
-                cout << npc.getName() << " gives a " << gift.getName() << " to " << player.getName() << "!" << endl;
-                player.addItem(gift);
+                // Item gift("Health Potion", 20, 0);
+                // cout << npc.getName() << " gives a " << gift.getName() << " to " << player.getName() << "!" << endl;
+                // player.addItem(gift);
             }
         }},
         {}
