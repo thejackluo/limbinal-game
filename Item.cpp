@@ -1,6 +1,8 @@
 using namespace std;
 #include <string>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 enum class ItemType {
     HEALTH,
@@ -48,4 +50,46 @@ private:
             default: return "Unknown";
         }
     }
+};
+
+template <typename T>
+class InventoryContainer {
+public:
+    void addItem(const T& item) {
+        items.push_back(item);
+    }
+
+    void removeItem(const T& item) {
+        auto it = std::find(items.begin(), items.end(), item);
+        if (it != items.end()) {
+            items.erase(it);
+        } else {
+            std::cout << "Item not found in inventory!" << std::endl;
+        }
+    }
+
+    void displayItems() const {
+        if (items.empty()) {
+            std::cout << "No items in inventory." << std::endl;
+        } else {
+            for (const auto& item : items) {
+                item.display();
+            }
+        }
+    }
+
+    void sortItemsById() {
+        std::sort(items.begin(), items.end(), [](const T& a, const T& b) {
+            return a.getId() < b.getId();
+        });
+    }
+
+    void sortItemsByName() {
+        std::sort(items.begin(), items.end(), [](const T& a, const T& b) {
+            return a.getName() < b.getName();
+        });
+    }
+
+private:
+    std::vector<T> items;
 };

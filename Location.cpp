@@ -29,6 +29,24 @@ public:
         npcs.push_back(npc);
     }
 
+    void removeItem(const Item& item) {
+        auto it = std::find(items.begin(), items.end(), item);
+        if (it != items.end()) {
+            items.erase(it);
+        } else {
+            cout << "Item not found in this location." << endl;
+        }
+    }
+
+    void removeNPC(const People& npc) {
+        auto it = std::find(npcs.begin(), npcs.end(), npc);
+        if (it != npcs.end()) {
+            npcs.erase(it);
+        } else {
+            cout << "NPC not found in this location." << endl;
+        }
+    }
+
     void display() {
         cout << "Location: " << name << endl;
         cout << description << endl;
@@ -81,6 +99,21 @@ public:
         for (Location* loc : locations) {
             loc->display();
             cout << "--------------------" << endl;
+        }
+    }
+
+    bool moveNPC(const string& npcName, Location* fromLocation, Location* toLocation) {
+        auto it = std::find_if(fromLocation->npcs.begin(), fromLocation->npcs.end(),
+                               [&npcName](const People& npc) { return npc.getName() == npcName; });
+
+        if (it != fromLocation->npcs.end()) {
+            People npc = *it;
+            fromLocation->removeNPC(npc);
+            toLocation->addNPC(npc);
+            return true;
+        } else {
+            cout << "NPC not found in the source location." << endl;
+            return false;
         }
     }
 

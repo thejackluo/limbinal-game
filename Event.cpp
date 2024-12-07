@@ -8,30 +8,6 @@ using namespace std;
 
 #include "Item.cpp"
 
-template <typename T>
-class EventContainer {
-public:
-    void addEvent(const T& event) {
-        events.push_back(event);
-    }
-
-    void removeEvent(const T& event) {
-        auto it = std::find(events.begin(), events.end(), event);
-        if (it != events.end()) {
-            events.erase(it);
-        }
-    }
-
-    void displayEvents() const {
-        for (const auto& event : events) {
-            cout << "Event: " << event.getName() << endl; // Assuming T has a getName() method
-        }
-    }
-
-private:
-    vector<T> events;
-};
-
 class Event {
 public:
     enum class EventType {
@@ -77,7 +53,7 @@ private:
     string message;
     vector<string> choices;
     vector<function<void()>> resolutions;
-    vector<SpecialEffect> effects; // Store special effects for each resolution
+    vector<SpecialEffect> effects;
 
     int getPlayerChoice() const {
         int choice;
@@ -108,6 +84,17 @@ public:
     void addEvent(const Event& event) {
         size_t eventHash = hash<string>{}(event.getName());
         eventMap[eventHash] = event;
+    }
+
+    void removeEvent(const string& eventName) {
+        size_t eventHash = hash<string>{}(eventName);
+        eventMap.erase(eventHash);
+    }
+
+    void displayEvents() const {
+        for (const auto& pair : eventMap) {
+            cout << "Event: " << pair.second.getName() << endl;
+        }
     }
 
     Event* getEvent(const string& eventName) {
