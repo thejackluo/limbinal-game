@@ -106,6 +106,13 @@ public:
         return nullptr;
     }
 
+    Event* getRandomEvent() {
+        if (eventMap.empty()) return nullptr;
+        auto it = eventMap.begin();
+        std::advance(it, rand() % eventMap.size());
+        return &(it->second);
+    }
+
 private:
     unordered_map<size_t, Event> eventMap;
 };

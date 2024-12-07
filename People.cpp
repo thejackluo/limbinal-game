@@ -105,6 +105,11 @@ public:
         inventory.displayItems();
     }
 
+    void displayInventory() const {
+        cout << "Inventory: ";
+        inventory.displayItems();
+    }
+
     void sortInventoryById() {
         inventory.sortItemsById();
     }

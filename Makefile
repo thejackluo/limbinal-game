@@ -1,17 +1,14 @@
 CXX = g++
 CXXFLAGS = -std=c++17
+OBJS = game.o Event.o People.o Item.o Location.o metadata.o
 
-all: game 
+all: game
 
-# Compile and run game
-game: game.o
-	$(CXX) $(CXXFLAGS) -o game game.o
-	./game
+game: $(OBJS)
+	$(CXX) $(CXXFLAGS) -o game $(OBJS)
 
-game.o: game.cpp
-	$(CXX) $(CXXFLAGS) -c game.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $<
 
-
-# Clean up
 clean:
-	rm -f game *.o
+	rm -f game $(OBJS)

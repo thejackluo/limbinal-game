@@ -102,19 +102,20 @@ public:
         }
     }
 
-    bool moveNPC(const string& npcName, Location* fromLocation, Location* toLocation) {
-        auto it = std::find_if(fromLocation->npcs.begin(), fromLocation->npcs.end(),
-                               [&npcName](const People& npc) { return npc.getName() == npcName; });
-
-        if (it != fromLocation->npcs.end()) {
-            People npc = *it;
-            fromLocation->removeNPC(npc);
-            toLocation->addNPC(npc);
-            return true;
-        } else {
-            cout << "NPC not found in the source location." << endl;
-            return false;
+    void displayConnections(Location* location) {
+        cout << "Connections from " << location->name << ": ";
+        for (const auto& connection : location->connections) {
+            cout << connection.first << " ";
         }
+        cout << endl;
+    }
+
+    bool movePlayer(Player& player, Location* newLocation) {
+        if (newLocation) {
+            player.setCurrentLocation(newLocation);
+            return true;
+        }
+        return false;
     }
 
     ~Map() {

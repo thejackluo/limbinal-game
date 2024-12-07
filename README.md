@@ -14,6 +14,9 @@ By Jack Luo
 4. Endings:
    - Determined by choices, stats, inventory, and random elements.
 
+## Development Status
+**Limbinal** is a work in progress.
+
 ## Topics Covered
 1. **Standard Library Containers (map, vector, etc.)**
    - **Implementation**: Used `vector` to store items in inventory and `map` for location connections.
@@ -61,4 +64,17 @@ By Jack Luo
 - **Item.cpp**: Item class definition.
 - **Location.cpp**: Location and map management.
 - **metadata.cpp**: Event creation functions.
+
+## Story Synopsis
+
+### Limbinal: A Journey Through the Virtual and Real
+
+In the year 2030, the world has become a place where virtual reality and the real world intertwine in unexpected ways. The protagonist, Ryohashi, finds himself trapped in a virtual world known as Limbo, a place that reflects the deepest desires and fears of its participants. This world is eerily familiar yet unsettling, with endless streets and static trees, devoid of life and sound.
+
+#### Characters
+- **Ryohashi**: The main protagonist, a socially reserved individual with a passion for technology and philosophy. Trapped in Limbo by his former friend Kakkeda, Ryohashi seeks to uncover the truth and save his friends, especially Yumi, who is his beacon of light.
+- **Yumi**: The deuteragonist, a carefree girl fascinated by astrology. She mysteriously disappeared from Ryohashi's life and is now trapped in Limbo, sending distress messages to the real world.
+- **Kakkeda**: The antagonist, a perfectionist with a love for VR technology. He co-founded the VR system with Ryohashi but trapped him in Limbo due to ideological differences.
+- **Hiroto**: A friend of Yumi, realistic and paranoid, who supports Yumi's stance on Limbo and navigates a world under surveillance.
+- **Suzumi**: A mysterious girl with a golden ponytail, part of Ryohashi's journey.
 
