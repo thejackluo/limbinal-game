@@ -2,7 +2,9 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+
 #include "Item.cpp"
+#include "Event.cpp"
 using namespace std;
 
 class People {
@@ -20,7 +22,7 @@ public:
         this->name = name;
     }
 
-    string getName() {
+    string getName() const {
         return name;
     }
 
@@ -34,7 +36,7 @@ public:
         if (money < 0) money = 0;
     }
 
-    virtual void displayStats() {
+    virtual void displayStats() const {
         cout << "Name: " << name << endl;
         cout << "Health: " << health << endl;
         cout << "Energy: " << energy << endl;
@@ -77,7 +79,7 @@ public:
         cout << "Item not found in inventory!" << endl;
     }
 
-    void displayStats() override {
+    void displayStats() const override {
         People::displayStats();
         cout << "Inventory: ";
         if (inventory.empty()) {
@@ -92,42 +94,58 @@ public:
 };
 
 class NPC : public People {
+private:
+    vector<Event> events;
+
 public:
     NPC(string name)
         : People(name, 50, 0, 0, 0) {}
 
-    void attack(Player& player) {
-        int damage = rand() % 10 + 1;
-        cout << name << " attacks " << player.getName() << " for " << damage << " damage!" << endl;
-        player.modifyStats(-damage, 0, 0, 0);
+    void addEvent(const Event& event) {
+        events.push_back(event);
     }
 
-    void give(Player& player) {
-        int itemOrMoney = rand() % 2;
-        if (itemOrMoney == 0) {
-            int amount = rand() % 20 + 1;
-            cout << name << " gives " << amount << " money to " << player.getName() << "!" << endl;
-            player.modifyStats(0, 0, 0, amount);
+    void triggerRandomEvent(Player& player) {
+        if (!events.empty()) {
+            int randomIndex = rand() % events.size();
+            events[randomIndex].runEvent(player);
         } else {
-            Item gift("Health Potion", 20, 0);
-            cout << name << " gives a " << gift.getName() << " to " << player.getName() << "!" << endl;
-            player.addItem(gift);
+            cout << name << " has no events to trigger." << endl;
         }
     }
 
-    void sendMessage() {
-        vector<string> messages = {
-            "Stay strong, traveler!",
-            "Beware of the cave ahead.",
-            "You can do it!",
-            "Remember to rest."
-        };
-        int randomIndex = rand() % messages.size();
-        cout << name << " says: \"" << messages[randomIndex] << "\"" << endl;
-    }
-
-    void displayStats() override {
+    void displayStats() const override {
         cout << "Name: " << name << endl;
         cout << "Health: " << health << endl;
     }
 };
+
+    // void attack(Player& player) {
+    //     int damage = rand() % 10 + 1;
+    //     cout << name << " attacks " << player.getName() << " for " << damage << " damage!" << endl;
+    //     player.modifyStats(-damage, 0, 0, 0);
+    // }
+
+    // void give(Player& player) {
+    //     int itemOrMoney = rand() % 2;
+    //     if (itemOrMoney == 0) {
+    //         int amount = rand() % 20 + 1;
+    //         cout << name << " gives " << amount << " money to " << player.getName() << "!" << endl;
+    //         player.modifyStats(0, 0, 0, amount);
+    //     } else {
+    //         Item gift("Health Potion", 20, 0);
+    //         cout << name << " gives a " << gift.getName() << " to " << player.getName() << "!" << endl;
+    //         player.addItem(gift);
+    //     }
+    // }
+
+    // void sendMessage() {
+    //     vector<string> messages = {
+    //         "Stay strong, traveler!",
+    //         "Beware of the cave ahead.",
+    //         "You can do it!",
+    //         "Remember to rest."
+    //     };
+    //     int randomIndex = rand() % messages.size();
+    //     cout << name << " says: \"" << messages[randomIndex] << "\"" << endl;
+    // }

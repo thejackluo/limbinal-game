@@ -4,6 +4,8 @@ using namespace std;
 #include <vector>
 #include <functional>
 
+#include "Item.cpp"
+
 class Event {
 public:
     enum class EventType {
@@ -11,12 +13,16 @@ public:
         STORY
     };
 
-    Event(string name, EventType type, string message, vector<string> choices, vector<function<void()>> resolutions)
-        : name(name), type(type), message(message), choices(choices), resolutions(resolutions) {}
+    struct SpecialEffect {
+        vector<int> attributeChanges; // Changes to player's attributes
+        vector<Item> items;           // Items to be added to the player
+    };
 
-    void runEvent() const {
-        cout << "Event: " << name << endl;
-        cout << "Type: " << (type == EventType::RANDOM ? "Random" : "Story") << endl;
+    Event(string name, EventType type, string message, vector<string> choices, vector<function<void()>> resolutions, vector<SpecialEffect> effects)
+        : name(name), type(type), message(message), choices(choices), resolutions(resolutions), effects(effects) {}
+
+    void runEvent(Player& player) const {
+        cout << "Event: " << name << " | Type: " << (type == EventType::RANDOM ? "Random" : "Story") << endl;
         cout << "Message: " << message << endl;
 
         if (!choices.empty()) {
@@ -30,9 +36,8 @@ public:
 
             if (playerChoice > 0 && playerChoice <= resolutions.size()) {
                 resolutions[playerChoice - 1](); 
+                applySpecialEffects(player, effects[playerChoice - 1]);
             }
-        } else {
-            cout << "No choices available. The event resolves automatically." << endl;
         }
     }
 
@@ -42,6 +47,7 @@ private:
     string message;
     vector<string> choices;
     vector<function<void()>> resolutions;
+    vector<SpecialEffect> effects; // Store special effects for each resolution
 
     int getPlayerChoice() const {
         int choice;
@@ -52,5 +58,17 @@ private:
             cout << "Invalid choice. Please enter a number between 1 and " << choices.size() << ": ";
         }
         return choice;
+    }
+
+    void applySpecialEffects(Player& player, const SpecialEffect& effect) const {
+        // Apply attribute changes
+        if (effect.attributeChanges.size() >= 4) {
+            player.modifyStats(effect.attributeChanges[0], effect.attributeChanges[1], effect.attributeChanges[2], effect.attributeChanges[3]);
+        }
+
+        // Add items to the player
+        for (const Item& item : effect.items) {
+            player.addItem(item);
+        }
     }
 };

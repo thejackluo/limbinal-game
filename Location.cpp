@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "Item.cpp"
+#include "People.cpp"
 using namespace std;
 
 class Location {
@@ -10,6 +11,7 @@ public:
     string name;
     string description;
     vector<Item> items;
+    vector<People> npcs;
     map<string, Location*> connections;
 
     Location(string locName, string locDesc)
@@ -19,16 +21,34 @@ public:
         connections[direction] = destination;
     }
 
+    void addItem(const Item& item) {
+        items.push_back(item);
+    }
+
+    void addNPC(const People& npc) {
+        npcs.push_back(npc);
+    }
+
     void display() {
         cout << "Location: " << name << endl;
         cout << description << endl;
+
         if (!items.empty()) {
             cout << "Items here: ";
             for (const auto& item : items) {
-                cout << item << " ";
+                cout << item.getName() << " ";
             }
             cout << endl;
         }
+
+        if (!npcs.empty()) {
+            cout << "People here: ";
+            for (const auto& npc : npcs) {
+                cout << npc.getName() << " ";
+            }
+            cout << endl;
+        }
+
         cout << "Connections: ";
         for (const auto& connection : connections) {
             cout << connection.first << " ";
@@ -57,6 +77,7 @@ public:
     }
 
     void displayMap() {
+        cout << "Map Overview:" << endl;
         for (Location* loc : locations) {
             loc->display();
             cout << "--------------------" << endl;

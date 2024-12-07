@@ -29,6 +29,10 @@ public:
         cout << "Value: " << value << endl;
     }
 
+    bool operator==(const Item& other) const {
+        return id == other.id && name == other.name && type == other.type && value == other.value;
+    }
+
 private:
     int id;
     string name;
