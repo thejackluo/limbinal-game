@@ -1,3 +1,7 @@
+using namespace std;
+#include <string>
+#include <vector>
+#include "Item.cpp"
 class People {
     public:
         People(string name, int health, int energy, int mem, int money): name(name), health(health), energy(energy), mem(mem), money(money) {}
@@ -39,6 +43,7 @@ class People {
         int energy;
         int mem;
         int money;
+        vector <Item> inventory;
         // inventory items
 
 };

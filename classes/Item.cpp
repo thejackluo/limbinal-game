@@ -23,5 +23,4 @@ class Item {
         string name;
         ItemType type;
         int value;
-    };
 };
