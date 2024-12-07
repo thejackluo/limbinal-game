@@ -90,6 +90,10 @@ public:
         });
     }
 
+    bool contains(const T& item) const {
+        return std::find(items.begin(), items.end(), item) != items.end();
+    }
+
 private:
     std::vector<T> items;
 };

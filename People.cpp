@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cstdlib>
 #include <algorithm>
 
 #include "Item.cpp"
@@ -61,28 +60,22 @@ public:
 
 class Player : public People {
 private:
-    vector<Item> inventory;
+    InventoryContainer<Item> inventory;
 
 public:
     Player(string name, int health, int energy, int mem, int money)
         : People(name, health, energy, mem, money) {}
 
     void addItem(const Item& item) {
-        inventory.push_back(item);
+        inventory.addItem(item);
     }
 
     void removeItem(const Item& item) {
-        auto it = std::find(inventory.begin(), inventory.end(), item);
-        if (it != inventory.end()) {
-            inventory.erase(it);
-        } else {
-            cout << "Item not found in inventory!" << endl;
-        }
+        inventory.removeItem(item);
     }
 
     void useItem(const Item& item) {
-        auto it = std::find(inventory.begin(), inventory.end(), item);
-        if (it != inventory.end()) {
+        if (inventory.contains(item)) {
             cout << "Using item: " << item.getName() << endl;
             switch (item.getType()) {
                 case ItemType::HEALTH:
@@ -100,7 +93,7 @@ public:
                 default:
                     break;
             }
-            inventory.erase(it);
+            inventory.removeItem(item);
         } else {
             cout << "Item not found in inventory!" << endl;
         }
@@ -109,26 +102,15 @@ public:
     void displayStats() const override {
         People::displayStats();
         cout << "Inventory: ";
-        if (inventory.empty()) {
-            cout << "No items." << endl;
-        } else {
-            for (const auto& item : inventory) {
-                cout << item.getName() << " ";
-            }
-            cout << endl;
-        }
+        inventory.displayItems();
     }
 
     void sortInventoryById() {
-        sort(inventory.begin(), inventory.end(), [](const Item& a, const Item& b) {
-            return a.getId() < b.getId();
-        });
+        inventory.sortItemsById();
     }
 
     void sortInventoryByName() {
-        sort(inventory.begin(), inventory.end(), [](const Item& a, const Item& b) {
-            return a.getName() < b.getName();
-        });
+        inventory.sortItemsByName();
     }
 };
 
@@ -158,34 +140,3 @@ public:
         cout << "Health: " << health << endl;
     }
 };
-
-// Archived code
-    // void attack(Player& player) {
-    //     int damage = rand() % 10 + 1;
-    //     cout << name << " attacks " << player.getName() << " for " << damage << " damage!" << endl;
-    //     player.modifyStats(-damage, 0, 0, 0);
-    // }
-
-    // void give(Player& player) {
-    //     int itemOrMoney = rand() % 2;
-    //     if (itemOrMoney == 0) {
-    //         int amount = rand() % 20 + 1;
-    //         cout << name << " gives " << amount << " money to " << player.getName() << "!" << endl;
-    //         player.modifyStats(0, 0, 0, amount);
-    //     } else {
-    //         Item gift("Health Potion", 20, 0);
-    //         cout << name << " gives a " << gift.getName() << " to " << player.getName() << "!" << endl;
-    //         player.addItem(gift);
-    //     }
-    // }
-
-    // void sendMessage() {
-    //     vector<string> messages = {
-    //         "Stay strong, traveler!",
-    //         "Beware of the cave ahead.",
-    //         "You can do it!",
-    //         "Remember to rest."
-    //     };
-    //     int randomIndex = rand() % messages.size();
-    //     cout << name << " says: \"" << messages[randomIndex] << "\"" << endl;
-    // }

@@ -31,7 +31,7 @@ People kakkeda("Kakkeda", 50, 0, 0, 0);
 People hiroto("Hiroto", 50, 0, 0, 0);
 People suzumi("Suzumi", 50, 0, 0, 0);
 
-EventContainer<Event> eventContainer;
+EventManager eventManager;
 
 void initializeMetadata() {
     // // Define dream world locations
@@ -77,7 +77,7 @@ void initializeMetadata() {
     locations.insert(locations.end(), physicalWorld.begin(), physicalWorld.end());
 
     // Create and store events directly
-    eventContainer.addEvent(Event(
+    eventManager.addEvent(Event(
         "Attack Event",
         Event::EventType::RANDOM,
         kakkeda.getName() + " is preparing to attack!",
@@ -90,7 +90,7 @@ void initializeMetadata() {
         {}
     ));
 
-    eventContainer.addEvent(Event(
+    eventManager.addEvent(Event(
         "Give Event",
         Event::EventType::RANDOM,
         yumi.getName() + " wants to give you something.",
@@ -110,7 +110,7 @@ void initializeMetadata() {
         {}
     ));
 
-    eventContainer.addEvent(Event(
+    eventManager.addEvent(Event(
         "Message Event",
         Event::EventType::RANDOM,
         hiroto.getName() + " has a message for you.",
