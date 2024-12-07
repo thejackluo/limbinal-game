@@ -63,8 +63,10 @@ public:
             cout << "You chose: " << choices[playerChoice - 1] << endl;
 
             if (playerChoice > 0 && playerChoice <= resolutions.size()) {
-                resolutions[playerChoice - 1](); 
-                applySpecialEffects(player, effects[playerChoice - 1]);
+                resolutions[playerChoice - 1]();
+                if (playerChoice <= effects.size()) {
+                    applySpecialEffects(player, effects[playerChoice - 1]);
+                }
             }
         }
     }

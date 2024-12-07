@@ -84,7 +84,22 @@ public:
         auto it = std::find(inventory.begin(), inventory.end(), item);
         if (it != inventory.end()) {
             cout << "Using item: " << item.getName() << endl;
-            modifyStats(item.getValue(), 0, 0, 0);
+            switch (item.getType()) {
+                case ItemType::HEALTH:
+                    modifyStats(item.getValue(), 0, 0, 0);
+                    break;
+                case ItemType::ENERGY:
+                    modifyStats(0, item.getValue(), 0, 0);
+                    break;
+                case ItemType::MEM:
+                    modifyStats(0, 0, item.getValue(), 0);
+                    break;
+                case ItemType::MONEY:
+                    modifyStats(0, 0, 0, item.getValue());
+                    break;
+                default:
+                    break;
+            }
             inventory.erase(it);
         } else {
             cout << "Item not found in inventory!" << endl;

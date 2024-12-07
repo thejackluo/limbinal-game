@@ -102,8 +102,8 @@ void initializeMetadata() {
                 cout << yumi.getName() << " gives " << amount << " money to " << ryohashi.getName() << "!" << endl;
                 ryohashi.modifyStats(0, 0, 0, amount);
             } else {
-                // Item gift("Health Potion", 20, 0);
-                // cout << yumi.getName() << " gives a " << gift.getName() << " to " << ryohashi.getName() << "!" << endl;
+                Item gift(5, "Health Potion", ItemType::HEALTH, 20);
+                cout << yumi.getName() << " gives a " << gift.getName() << " to " << ryohashi.getName() << "!" << endl;
                 // ryohashi.addItem(gift);
             }
         }},
