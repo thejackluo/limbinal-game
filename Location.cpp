@@ -6,37 +6,23 @@
 #include <algorithm> // for std::find
 
 Location::Location(std::string locName, std::string locDesc)
-    : name(std::move(locName)), description(std::move(locDesc))
-{}
+    : name(std::move(locName)), description(std::move(locDesc)) {}
 
-std::string Location::getName() const {
-    return name;
-}
+// Getters
+std::string Location::getName() const { return name; }
+std::string Location::getDescription() const { return description; }
 
-std::string Location::getDescription() const {
-    return description;
-}
+// Setters
+void Location::setName(const std::string& locName) { name = locName; }
+void Location::setDescription(const std::string& locDesc) { description = locDesc; }
 
-void Location::setName(const std::string& locName) {
-    name = locName;
-}
+// Adders
+void Location::addConnection(const std::string& direction, Location* destination) { connections[direction] = destination; }
+void Location::addItem(const Item& item) { items.push_back(item); }
+void Location::addNPC(const People& npc) { npcs.push_back(npc); }
+void Location::addEvent(const Event& event) { events.push_back(event); }
 
-void Location::setDescription(const std::string& locDesc) {
-    description = locDesc;
-}   
-
-void Location::addConnection(const std::string& direction, Location* destination) {
-    connections[direction] = destination;
-}
-
-void Location::addItem(const Item& item) {
-    items.push_back(item);
-}
-
-void Location::addNPC(const People& npc) {
-    npcs.push_back(npc);
-}
-
+// Removers
 void Location::removeItem(const Item& item) {
     auto it = std::find(items.begin(), items.end(), item);
     if (it != items.end()) {
@@ -55,6 +41,16 @@ void Location::removeNPC(const People& npc) {
     }
 }
 
+void Location::removeEvent(const Event& event) {
+    auto it = std::find(events.begin(), events.end(), event);
+    if (it != events.end()) {
+        events.erase(it);
+    } else {
+        std::cout << "Event not found in this location." << std::endl;
+    }
+}
+
+// Display (DEBUGGING)
 void Location::display() const {
     std::cout << "Location: " << name << std::endl;
     std::cout << description << std::endl;

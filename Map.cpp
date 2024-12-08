@@ -38,12 +38,14 @@ void Map::displayConnections(Location* location) const {
     }
 }
 
+// TODO: IF the player can move to the lcoation determined by the connections to the location, then move the player to the new location if not, then return false 
 bool Map::movePlayer(Player& player, Location* newLocation) {
-    if (newLocation) {
+    // Check if the new location is a valid connection from the current location
+    if (newLocation && player.getCurrentLocation()->connections.find(newLocation->name) != player.getCurrentLocation()->connections.end()) {
         player.setCurrentLocation(newLocation);
         return true;
     }
-    return false;
+    return false;       
 }
 
 Map::~Map() {

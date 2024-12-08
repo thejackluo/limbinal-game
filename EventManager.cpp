@@ -48,3 +48,4 @@ Event* EventManager::getRandomEvent() {
     return &(*it);
 }
 
+// Event* EventManager::getEventByNumber(int eventNumber) {
