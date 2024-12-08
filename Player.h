@@ -27,6 +27,8 @@ public:
     void setCurrentLocation(Location* location);
     Location* getCurrentLocation() const;
 
+    void useItemByName(const std::string& itemName);
+
 private:
     InventoryContainer<Item> inventory;
     Location* currentLocation;

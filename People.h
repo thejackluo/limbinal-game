@@ -6,6 +6,8 @@
 class People {
 public:
     People(std::string name, int health, int energy, int mem, int money);
+    // People(const People& other); // Declare the copy constructor
+
     virtual ~People();
 
     People& operator=(const People& other);

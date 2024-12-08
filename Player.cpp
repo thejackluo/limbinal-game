@@ -36,6 +36,25 @@ void Player::useItem(const Item& item) {
     }
 }
 
+void Player::useItemByName(const std::string& input) {
+    Item item;
+    bool found = false;
+
+    // Check if the input is a number (ID)
+    if (std::all_of(input.begin(), input.end(), ::isdigit)) {
+        int itemId = std::stoi(input);
+        found = inventory.findItemById(itemId, item);
+    } else {
+        found = inventory.findItemByName(input, item);
+    }
+
+    if (found) {
+        useItem(item);
+    } else {
+        std::cout << "Item not found in inventory!" << std::endl;
+    }
+}
+
 void Player::displayStats() const { People::displayStats(); std::cout << "Inventory: "; inventory.displayItems(); }
 void Player::displayInventory() const { std::cout << "Inventory: "; inventory.displayItems(); }
 void Player::sortInventoryById() { inventory.sortItemsById(); }
