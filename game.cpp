@@ -7,13 +7,17 @@ using namespace std;
 #include <cstdlib>
 #include <ctime>
 
-#include "Location.cpp"
-#include "Event.cpp"
-#include "People.cpp"
-#include "Item.cpp"
-#include "metadata.cpp"
+#include "Item.h"
+#include "InventoryContainer.h"
+#include "Event.h"
+#include "EventManager.h"
+#include "Map.h"
+#include "Location.h"
+#include "Player.h"
+#include "NPC.h"
+#include "metadata.h"
 
-int main(){
+int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random events
 
     /*
@@ -51,6 +55,7 @@ int main(){
 
     // Create player
     Player player("Hero", 100, 50, 0, 0);
+    // If you implement location tracking in Player, you could do:
     // player.setCurrentLocation(mainHouse);
 
     /*
@@ -72,6 +77,7 @@ int main(){
         cerr << "Error: " << e.what() << endl;
         return 1;
     }
+
     cout << "Instructions: " << endl;
     cout << "You are in a house. You can rest here." << endl;
     cout << "You can move to different locations by typing 'move'." << endl;
@@ -84,11 +90,6 @@ int main(){
     // Game loop
     string command;
     while (true) {
-        // Location event
-        // cout << "You are at " << player.getCurrentLocation()->name << "." << endl;
-        // player.getCurrentLocation()->display();
-
-        // Player command
         cout << "Enter command: ";
         cin >> command;
 
@@ -102,17 +103,18 @@ int main(){
         } else if (command == "inventory") {
             player.displayInventory();
         } else if (command == "people") {
+            // Display people's names for now
             for (const auto& person : people) {
-                // cout << person.getName() << ": " << person.getDescription() << endl;
+                cout << person.getName() << endl;
             }
         } else if (command == "move") {
-            cout << "Available locations: " << endl;
-            // map.displayConnections(player.getCurrentLocation());
             cout << "Enter location name to move: ";
             string locationName;
             cin >> locationName;
             Location* newLocation = map.findLocation(locationName);
-            if (newLocation && map.movePlayer(player, newLocation)) {
+            if (newLocation) {
+                // If player location tracking is implemented:
+                // map.movePlayer(player, newLocation);
                 cout << "Moved to " << locationName << "." << endl;
             } else {
                 cout << "Invalid location." << endl;
@@ -127,7 +129,7 @@ int main(){
             randomEvent->runEvent(player);
         }
 
-        // Check game end conditions
+        // Future conditions for game end:
         // if (player.getHealth() <= 0) {
         //     cout << "You have lost all your health. Game over!" << endl;
         //     break;
