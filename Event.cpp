@@ -14,9 +14,11 @@
 Event::Event(std::string name, EventType type, std::string message,
              std::vector<std::string> choices,
              std::vector<std::pair<std::string, std::function<void()>>> resolutions,
-             std::vector<SpecialEffect> effects)
+             std::vector<SpecialEffect> effects,
+             int eventNumber)
     : name(std::move(name)), type(type), message(std::move(message)),
-      choices(std::move(choices)), resolutions(std::move(resolutions)), effects(std::move(effects))
+      choices(std::move(choices)), resolutions(std::move(resolutions)), effects(std::move(effects)),
+      eventNumber(eventNumber)
 {}
 
 // getters
@@ -26,6 +28,7 @@ std::string Event::getMessage() const { return message; }
 std::vector<std::string> Event::getChoices() const { return choices; }
 std::vector<std::pair<std::string, std::function<void()>>> Event::getResolutions() const { return resolutions; }
 std::vector<Event::SpecialEffect> Event::getEffects() const { return effects; }
+int Event::getEventNumber() const { return eventNumber; }
 
 // setters
 void Event::setName(const std::string& eventName) { name = eventName; }
@@ -34,7 +37,7 @@ void Event::setMessage(const std::string& eventMessage) { message = eventMessage
 void Event::setChoices(const std::vector<std::string>& eventChoices) { choices = eventChoices; }
 void Event::setResolutions(const std::vector<std::pair<std::string, std::function<void()>>>& eventResolutions) { resolutions = eventResolutions; }
 void Event::setEffects(const std::vector<SpecialEffect>& eventEffects) { effects = eventEffects; }
-
+void Event::setEventNumber(int eventNumber) { this->eventNumber = eventNumber; }   
 
 void Event::runEvent(Player& player) const {
     // Display event type and story

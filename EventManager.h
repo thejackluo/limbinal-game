@@ -12,6 +12,7 @@ public:
     void displayEvents() const;
     Event* getEvent(const std::string& eventName);
     Event* getRandomEvent();
+    // Event* getEventByNumber(int eventNumber); // TODO: implement this
 
 private:
     std::unordered_map<size_t, Event> eventMap;

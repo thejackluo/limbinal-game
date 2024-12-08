@@ -47,3 +47,4 @@ Event* EventManager::getRandomEvent() {
     std::advance(it, rand() % randomEvents.size());
     return &(*it);
 }
+

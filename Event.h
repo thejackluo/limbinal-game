@@ -24,7 +24,7 @@ public:
     Event(std::string name, EventType type, std::string message,
           std::vector<std::string> choices,
           std::vector<std::pair<std::string, std::function<void()>>> resolutions,
-          std::vector<SpecialEffect> effects);
+          std::vector<SpecialEffect> effects, int eventNumber);
 
     // getters
     std::string getName() const;
@@ -33,6 +33,7 @@ public:
     std::vector<std::string> getChoices() const;
     std::vector<std::pair<std::string, std::function<void()>>> getResolutions() const;
     std::vector<SpecialEffect> getEffects() const;
+    int getEventNumber() const;
 
     // setters
     void setName(const std::string& eventName);
@@ -41,7 +42,7 @@ public:
     void setChoices(const std::vector<std::string>& eventChoices);
     void setResolutions(const std::vector<std::pair<std::string, std::function<void()>>>& eventResolutions);
     void setEffects(const std::vector<SpecialEffect>& eventEffects);
-
+    void setEventNumber(int eventNumber);
     // run the event
     void runEvent(class Player& player) const;
 
@@ -53,6 +54,7 @@ private:
     std::vector<std::string> choices; // choices of the event (displayed to the player in the list)
     std::vector<std::pair<std::string, std::function<void()>>> resolutions; // resolutions of the event (functions to be called and also messages to be displayed)
     std::vector<SpecialEffect> effects; // effects of the event (changes to the player's attributes and items)
+    int eventNumber; // Add this line to store the event number
 
     // private methods
     int getPlayerChoice(class Player& player) const;

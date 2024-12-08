@@ -1,39 +1,50 @@
 #include "metadata.h"
-
-// Include the relevant headers instead of the .cpp files
-#include "Location.h"
 #include "Item.h"
+#include "InventoryContainer.h"
 #include "Event.h"
-#include "People.h"
-#include "Player.h"       // If needed
 #include "EventManager.h"
+#include "Map.h"
+#include "Location.h"
+#include "Player.h"
+#include "NPC.h"
 
 #include <iostream>
 #include <cstdlib> // for rand()
 
 // Define the global variables declared in metadata.h
-std::vector<Character> characters = {
-    {"Ryohashi", "Main Protagonist", "A socially reserved individual with a passion for technology and philosophy."},
-    {"Yumi", "Deuteragonist", "A carefree girl fascinated by astrology and the stars."},
-    {"Kakkeda", "Antagonist", "A perfectionist with a love for VR technology and psychological experiments."},
-    {"Hiroto", "Friend", "A realistic and paranoid individual who supports Yumi's stance on Limbo."},
-    {"Suzumi", "Friend", "A golden ponytail girl with a mysterious background."}
+/*
+    =================================================================================
+    Section 1: People (Player and NPCs)
+    =================================================================================
+
+*/
+// std::vector<Character> characters = {
+//     {"Ryohashi", "Main Protagonist", "A socially reserved individual with a passion for technology and philosophy."},
+//     {"Yumi", "Deuteragonist", "A carefree girl fascinated by astrology and the stars."},
+//     {"Kakkeda", "Antagonist", "A perfectionist with a love for VR technology and psychological experiments."},
+//     {"Hiroto", "Friend", "A realistic and paranoid individual who supports Yumi's stance on Limbo."},
+//     {"Suzumi", "Friend", "A golden ponytail girl with a mysterious background."}
+// }; ORIGINAL, Ryohashi is player and the others are NPCs
+
+std::vector<People> characters = {
+    People("Ryohashi", 100, 50, 30, 100),
+    People("Yumi", 50, 0, 0, 0),
+    People("Kakkeda", 50, 0, 0, 0),
+    People("Hiroto", 50, 0, 0, 0),
+    People("Suzumi", 50, 0, 0, 0)
 };
 
 std::vector<Location> locations;
 std::vector<Item> items;
-std::vector<People> people;
-
-// Define the specific People
-People ryohashi("Ryohashi", 100, 50, 30, 100);
-People yumi("Yumi", 50, 0, 0, 0);
-People kakkeda("Kakkeda", 50, 0, 0, 0);
-People hiroto("Hiroto", 50, 0, 0, 0);
-People suzumi("Suzumi", 50, 0, 0, 0);
 
 EventManager eventManager;
 
 void initializeMetadata() {
+    /*
+        =================================================================================
+        Section 2: Map Locations
+        =================================================================================
+    */
     // Define physical world locations
     Location mainHouse("Main House", "The central location in the physical world.");
     Location suburbs("Suburbs", "Located south of the main house.");
@@ -62,6 +73,21 @@ void initializeMetadata() {
     // Add locations to the global locations vector
     locations.insert(locations.end(), physicalWorld.begin(), physicalWorld.end());
 
+    // Add NPCs to locations (People are treated as NPCs here)
+    // Since 'Location' stores People by value, we must ensure People is compatible
+    // If you need them as NPC or special classes, consider using NPC class or modify the approach.
+    locations[0].addNPC(ryohashi); // mainHouse
+    locations[1].addNPC(yumi);     // suburbs
+    locations[2].addNPC(kakkeda);  // childhood
+    locations[3].addNPC(hiroto);   // mainTown1
+    locations[4].addNPC(suzumi);   // mainTown2
+
+
+    /*
+        =================================================================================
+        Section 3: Events
+        =================================================================================
+    */
     // Create and store events directly
     eventManager.addEvent(Event(
         "Attack Event",
@@ -73,7 +99,7 @@ void initializeMetadata() {
             std::cout << kakkeda.getName() << " attacks " << ryohashi.getName() << " for " << damage << " damage!" << std::endl;
             ryohashi.modifyStats(-damage, 0, 0, 0);
         }},
-        {}
+        -1 // Random event, no specific number
     ));
 
     eventManager.addEvent(Event(
@@ -94,7 +120,7 @@ void initializeMetadata() {
                 // ryohashi.addItem(gift); // If ryohashi was a Player instead of People.
             }
         }},
-        {}
+        -1 // Random event, no specific number
     ));
 
     eventManager.addEvent(Event(
@@ -112,18 +138,28 @@ void initializeMetadata() {
             int randomIndex = rand() % messages.size();
             std::cout << hiroto.getName() << " says: \"" << messages[randomIndex] << "\"" << std::endl;
         }},
-        {}
+        -1 // Random event, no specific number
     ));
 
-    // Add NPCs to locations (People are treated as NPCs here)
-    // Since 'Location' stores People by value, we must ensure People is compatible
-    // If you need them as NPC or special classes, consider using NPC class or modify the approach.
-    locations[0].addNPC(ryohashi); // mainHouse
-    locations[1].addNPC(yumi);     // suburbs
-    locations[2].addNPC(kakkeda);  // childhood
-    locations[3].addNPC(hiroto);   // mainTown1
-    locations[4].addNPC(suzumi);   // mainTown2
+    // New story event about Ryohashi in 2037 Tokyo
+    eventManager.addEvent(Event(
+        "2037 Tokyo Arrival",
+        Event::EventType::STORY,
+        "Ryohashi arrives in the bustling city of 2037 Tokyo, filled with neon lights and advanced technology.",
+        {"Explore", "Rest"},
+        { [=]() {
+            std::cout << "Ryohashi decides to explore the city, taking in the sights and sounds of this futuristic metropolis." << std::endl;
+        }, [=]() {
+            std::cout << "Ryohashi finds a quiet place to rest and gather his thoughts." << std::endl;
+        }},
+        1 // Story event number
+    ));
 
+    /*
+        =================================================================================
+        Section 4: Items
+        =================================================================================
+    */
     // Initialize some items
     items.push_back(Item(1, "Bandage", ItemType::HEALTH, 10));
     items.push_back(Item(2, "Memory Chip", ItemType::MEM, 25));
