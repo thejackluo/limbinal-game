@@ -13,6 +13,14 @@ class Location {
 public:
     Location(std::string locName, std::string locDesc);
 
+    // Getters
+    std::string getName() const;
+    std::string getDescription() const;
+
+    // Setters
+    void setName(const std::string& locName);
+    void setDescription(const std::string& locDesc);
+    
     void addConnection(const std::string& direction, Location* destination);
     void addItem(const Item& item);
     void addNPC(const People& npc);

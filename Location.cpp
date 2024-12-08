@@ -9,6 +9,22 @@ Location::Location(std::string locName, std::string locDesc)
     : name(std::move(locName)), description(std::move(locDesc))
 {}
 
+std::string Location::getName() const {
+    return name;
+}
+
+std::string Location::getDescription() const {
+    return description;
+}
+
+void Location::setName(const std::string& locName) {
+    name = locName;
+}
+
+void Location::setDescription(const std::string& locDesc) {
+    description = locDesc;
+}   
+
 void Location::addConnection(const std::string& direction, Location* destination) {
     connections[direction] = destination;
 }
