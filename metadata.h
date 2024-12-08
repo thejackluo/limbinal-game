@@ -5,6 +5,15 @@
 #include <string>
 #include <map>
 
+#include "Item.h"
+#include "Event.h"
+#include "EventManager.h"
+#include "Location.h"
+#include "People.h"
+#include "Player.h"
+#include "NPC.h"
+#include "InventoryContainer.h"
+
 struct Character {
     std::string name;
     std::string role;

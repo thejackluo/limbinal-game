@@ -109,3 +109,12 @@ std::vector<std::pair<std::string, std::function<void()>>> resolutions = {
     {"Resolution 1", []() { /* some action */ }},
     {"Resolution 2", []() { /* another action */ }}
 };
+
+bool Event::operator==(const Event& other) const {
+    // Compare name, message, choices, and eventNumber (unique fields)
+    return name == other.name &&
+           message == other.message &&
+           choices == other.choices &&
+           eventNumber == other.eventNumber; 
+    // Skip comparing resolutions and effects if they can't be easily compared
+}

@@ -46,6 +46,8 @@ public:
     // run the event
     void runEvent(class Player& player) const;
 
+    bool operator==(const Event& other) const;
+
 private:
     // private attributes
     std::string name; // name of the event
@@ -59,6 +61,9 @@ private:
     // private methods
     int getPlayerChoice(class Player& player) const;
     void applySpecialEffects(class Player& player, const SpecialEffect& effect) const;
+   
 };
+
+
 
 #endif // EVENT_H

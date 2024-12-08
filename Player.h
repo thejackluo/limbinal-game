@@ -4,7 +4,8 @@
 #include "People.h"
 #include "InventoryContainer.h"  // For InventoryContainer<T>
 #include "Item.h"                // For Item and ItemType
-#include "Location.h"            // For Location
+// forward declare Location
+class Location;
 
 class Player : public People {
 public:

@@ -5,12 +5,13 @@
 #include <vector>
 #include <map>
 
-// Forward declare classes referenced by pointer only if needed
-class Item;
-class People;
-class Event;
+#include "Item.h"
+#include "People.h"
+#include "Event.h"
 class Location {
 public:
+    // Constructors
+    Location();
     Location(std::string locName, std::string locDesc);
 
     // Getters

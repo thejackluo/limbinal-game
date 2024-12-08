@@ -1,10 +1,13 @@
 #include "Location.h"
 #include "Item.h"
 #include "People.h"
+#include "Event.h"
 
 #include <iostream>
 #include <algorithm> // for std::find
 
+// Constructor
+Location::Location() : name("Default Location"), description("Default Description") {}
 Location::Location(std::string locName, std::string locDesc)
     : name(std::move(locName)), description(std::move(locDesc)) {}
 

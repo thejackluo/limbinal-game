@@ -6,6 +6,7 @@
 #include "People.h"
 #include "Player.h"
 #include "NPC.h"
+#include "InventoryContainer.h"
 
 #include <vector>
 #include <map>
