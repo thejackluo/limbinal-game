@@ -51,6 +51,28 @@ public:
         return std::find(items.begin(), items.end(), item) != items.end();
     }
 
+    bool findItemByName(const std::string& name, T& foundItem) const {
+        auto it = std::find_if(items.begin(), items.end(), [&](const T& item) {
+            return item.getName() == name;
+        });
+        if (it != items.end()) {
+            foundItem = *it;
+            return true;
+        }
+        return false;
+    }
+
+    bool findItemById(int id, T& foundItem) const {
+        auto it = std::find_if(items.begin(), items.end(), [&](const T& item) {
+            return item.getId() == id;
+        });
+        if (it != items.end()) {
+            foundItem = *it;
+            return true;
+        }
+        return false;
+    }
+
 private:
     std::vector<T> items;
 };
