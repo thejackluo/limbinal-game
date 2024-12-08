@@ -55,16 +55,27 @@ int main() {
 
     // Create player
     Player player("Hero", 100, 50, 0, 0);
-    // If you implement location tracking in Player, you could do:
-    // player.setCurrentLocation(mainHouse);
+    player.setCurrentLocation(mainHouse);
 
+   
     /*
         ========================
-        Section 2: Game Loop
+        Section 2: Welcome Message
         ========================
     */
-    cout << "Welcome to Limbinal!" << endl;
-    cout << "What is your name?" << endl;
+    cout << "Welcome to" << endl;
+    cout << " ============================================= \n";
+    cout << "  _      _           _     _             _ \n";
+    cout << " | |    (_)         | |   (_)           | |\n";
+    cout << " | |     _ _ __ ___ | |__  _ _ __   __ _| |\n";
+    cout << " | |    | | '_ ` _ \\| '_ \\| | '_ \\ / _` | |\n";
+    cout << " | |____| | | | | | | |_) | | | | | (_| | |\n";
+    cout << " |______|_|_| |_| |_|_.__/|_|_| |_|\\__,_|_|\n";
+    cout << "                                           \n";
+    cout << " ============================================= \n";
+    cout << "                                           \n";
+    
+    cout << "What is the name of your character: ";
     string name;
     try {
         cin >> name;
@@ -72,24 +83,54 @@ int main() {
             throw runtime_error("Invalid input for name.");
         }
         player.setName(name);
-        cout << "Hello " << player.getName() << "!" << endl;
+        cout << "=============================================" << endl;
+        cout << "Hello " << player.getName() << "! Welcome to Limbinal! You are about to embark on a journey across space to find your true purposes" << endl;
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;
         return 1;
     }
 
-    cout << "Instructions: " << endl;
-    cout << "You are in a house. You can rest here." << endl;
-    cout << "You can move to different locations by typing 'move'." << endl;
-    cout << "You can check your status by typing 'status'." << endl;
-    cout << "You can check the map by typing 'map'." << endl;
-    cout << "You can display your inventory by typing 'inventory'." << endl;
-    cout << "You can display people by typing 'people'." << endl;
-    cout << "You can quit the game by typing 'quit'." << endl;
+    cout << "HERE ARE THE INSTRUCTIONS BEFORE YOU EMBARK ON YOUR JOURNEY: " << endl;
+    cout << "=============================================" << endl;
+    cout << "Work in progress?" << endl;
+    cout << "=============================================" << endl;
 
-    // Game loop
+    cout << "Are you ready to begin your journey? (y/n): ";
+    string ready;
+    cin >> ready;
+
+    if (ready == "y") {
+        cout << "Let the adventure begin!" << endl;
+    } else {
+        cout << "No worries, feel free to come back later!" << endl;
+        return 0;
+    }
+
+    /*
+        ========================
+        Section 3: Game Loop
+        ========================
+    */
     string command;
+    EventManager eventManager;
+    Event* currentEvent = nullptr;
+    // set current event to the first event in the event manager
+    currentEvent = eventManager.getEvent(0);
     while (true) {
+        /*
+            ========================
+            Section 3.1: UI Screen
+            ========================
+        */
+        cout << "=============================================" << endl;
+        cout << "LIMBINAL" << " - " << player.getCurrentLocation()->getName() << endl;
+        cout << player.getCurrentLocation()->getDescription() << endl;
+        cout << "---------------------------------------------" << endl;
+        cout << "STORY: " << currentEvent->getMessage() << endl;
+        
+        cout << "=============================================" << endl;
+
+        
         cout << "Enter command: ";
         cin >> command;
 

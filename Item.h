@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 enum class ItemType {
     HEALTH,
@@ -13,8 +14,10 @@ enum class ItemType {
 
 class Item {
 public:
+    Item() = default;
     Item(int id, const std::string& name, ItemType type, int value);
 
+    // Getter and setters
     int getId() const;
     std::string getName() const;
     ItemType getType() const;
@@ -23,8 +26,10 @@ public:
     void setType(ItemType type);
     void setValue(int value);
 
+    // Display function
     void display() const;
 
+    // Operator overloading
     bool operator==(const Item& other) const;
 
 private:
