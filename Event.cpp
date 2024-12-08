@@ -40,44 +40,46 @@ void Event::setEffects(const std::vector<SpecialEffect>& eventEffects) { effects
 void Event::setEventNumber(int eventNumber) { this->eventNumber = eventNumber; }   
 
 void Event::runEvent(Player& player) const {
-    // Display event type and story
-    std::cout << "=============================================" << std::endl;
-    std::cout << "EVENT TYPE: " << (type == EventType::RANDOM ? "EVENT" : "STORY") << std::endl;
-    std::cout << message << std::endl; // Multi-line story support
-    std::cout << "---------------------------------------------" << std::endl;
+    // Clear screen or not? Up to you. We'll not clear here to keep context.
+    // Display event info in a cleaner block
+    std::cout << "==================================================\n";
+    std::cout << (type == EventType::RANDOM ? "EVENT" : "STORY") << ": " << name << "\n";
+    std::cout << message << "\n";
 
-    // Display choices
     if (!choices.empty()) {
-        std::cout << "CHOICES:" << std::endl;
+        std::cout << "--------------------------------------------------\n";
+        std::cout << "CHOICES:\n";
         for (size_t i = 0; i < choices.size(); ++i) {
-            std::cout << "[" << i + 1 << "]: " << choices[i] << std::endl;
+            std::cout << "[" << i + 1 << "]: " << choices[i] << "\n";
         }
-        std::cout << "=============================================" << std::endl;
+        std::cout << "==================================================\n";
 
-        // Get player's choice
         int playerChoice = getPlayerChoice(player);
-
-        // Display resolution message
-        std::cout << "============================" << std::endl;
         const auto& resolution = resolutions[playerChoice - 1];
-        std::cout << "RESOLUTION: " << resolution.first << std::endl;
 
-        // Apply resolution function
-        resolution.second();
+        std::cout << "--------------------------------------------------\n";
+        std::cout << "RESOLUTION: " << resolution.first << "\n";
+        resolution.second(); // Apply resolution lambda
 
-        // Apply special effects (if any)
+        // Apply effects if any
         if (static_cast<size_t>(playerChoice) <= effects.size()) {
             applySpecialEffects(player, effects[playerChoice - 1]);
         }
 
-        // Display stat changes and items
-        std::cout << "============================" << std::endl;
+        // After resolution and effects, show updated stats and inventory once
+        std::cout << "--------------------------------------------------\n";
         player.displayStats();
         player.displayInventory();
+
     } else {
-        std::cout << "No choices available for this event." << std::endl;
+        // If no choices
+        std::cout << "--------------------------------------------------\n";
+        std::cout << "No choices available.\n";
     }
+
+    std::cout << "==================================================\n";
 }
+
 
 int Event::getPlayerChoice(Player& player) const {
     int choice;

@@ -1,4 +1,3 @@
-using namespace std;
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,25 +17,59 @@ using namespace std;
 #include "NPC.h"
 #include "metadata.h"
 
+using namespace std;
+
+// Optional: function to clear the console screen for a cleaner UI per turn
+void clearScreen() {
+#ifdef _WIN32
+    system("CLS");
+#else
+    system("clear");
+#endif
+}
+
+// A helper function to display a nice separator line
+void printSeparator(char c = '=', int length = 45) {
+    for (int i = 0; i < length; i++) cout << c;
+    cout << "\n";
+}
+
+// Function to display the main header and location info
+void displayLocationInfo(const Player &player) {
+    printSeparator('=');
+    cout << "LIMBINAL - " << player.getCurrentLocation()->getName() << "\n";
+    cout << player.getCurrentLocation()->getDescription() << "\n";
+    printSeparator('-');
+}
+
+// Display main action menu
+void displayMainMenu() {
+    cout << "What would you like to do?\n";
+    cout << "[1] Move to another location\n";
+    cout << "[2] Use an item\n";
+    cout << "[3] Stay here\n";
+    cout << "[4] Inspect the location\n";
+    cout << "[5] Check status\n";
+    cout << "[6] Quit\n";
+    cout << "Enter a number: ";
+}
+
+// After story events or random events are run, we can show a short pause
+void pauseForUser() {
+    cout << "\n(Press Enter to continue...)\n";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.get();
+}
+
 int main() {
     srand(static_cast<unsigned int>(time(0))); // Seed for random events
-
-    /*
-        ========================
-        Section 1: Initialize Game
-        ========================
-    */
 
     initializeMetadata(); // Initialize metadata
 
     // Use Ryohashi as the player
     ryohashi.setCurrentLocation(&locations["Main House"]);
 
-    /*
-        ========================
-        Section 2: Welcome Message
-        ========================
-    */
+    // Welcome message
     cout << "Welcome to" << endl;
     cout << " ============================================= \n";
     cout << "  _      _           _     _             _ \n";
@@ -58,48 +91,38 @@ int main() {
         }
         ryohashi.setName(name);
         cout << "=============================================" << endl;
-        cout << "Hello " << ryohashi.getName() << "! Welcome to Limbinal! You are about to embark on a journey across space to find your true purposes" << endl << endl;
+        cout << "Hello " << ryohashi.getName() << "! Welcome to Limbinal! You are about to embark on a journey across space to find your true purposes\n\n";
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;
         return 1;
     }
 
-    cout << "HERE ARE THE INSTRUCTIONS BEFORE YOU EMBARK ON YOUR JOURNEY: " << endl;
-    cout << " - Your goal is to find your true purpose in life by exploring the world and interacting with people." << endl;
-    cout << " - You will be given a series of events to complete, each with a set of choices." << endl;
-    cout << " - Your choices will affect your attributes and the story will unfold differently based on your choices." << endl;
-    cout << " - You can also explore the world by moving to different locations." << endl;
-    cout << "Let the adventure begin!" << endl << endl;
+    cout << "HERE ARE THE INSTRUCTIONS BEFORE YOU EMBARK ON YOUR JOURNEY:\n";
+    cout << " - Your goal is to find your true purpose in life by exploring the world and interacting with people.\n";
+    cout << " - You will be given a series of events to complete, each with a set of choices.\n";
+    cout << " - Your choices will affect your attributes and the story will unfold differently based on your choices.\n";
+    cout << " - You can also explore the world by moving to different locations.\n";
+    cout << "Let the adventure begin!\n\n";
 
     cout << "Are you ready to begin your journey? (y/n): ";
     string ready;
     cin >> ready;
 
     if (ready == "y") {
-        cout << "Let the adventure begin!" << endl;
+        cout << "Let the adventure begin!\n";
     } else {
-        cout << "No worries, feel free to come back later!" << endl;
+        cout << "No worries, feel free to come back later!\n";
         return 0;
     }
 
-    /*
-        ========================
-        Section 3: Game Loop
-        ========================
-    */
-    string command;
-    Event* currentEvent = nullptr;
-    // set current event to the first event in the event manager
-    currentEvent = eventManager.getEvent("2037 Tokyo Arrival");
+    // The main game loop
     while (true) {
-        // 1. Display Location & Basic Info
-        cout << "=============================================\n";
-        cout << "LIMBINAL - " << ryohashi.getCurrentLocation()->getName() << "\n";
-        cout << ryohashi.getCurrentLocation()->getDescription() << "\n";
-        
+        clearScreen();
+        displayLocationInfo(ryohashi);
+
         Location* currentLoc = ryohashi.getCurrentLocation();
-        
-        // 2. Check if there's a STORY event in the current location
+
+        // Check for STORY event
         Event* storyEvent = nullptr;
         for (auto& evt : currentLoc->events) {
             if (evt.getType() == Event::EventType::STORY) {
@@ -109,88 +132,74 @@ int main() {
         }
 
         if (storyEvent) {
-            // Run the story event
             storyEvent->runEvent(ryohashi);
-            // Remove the event after completion
             currentLoc->removeEvent(*storyEvent);
-            
-            // After a story event, possibly continue the loop.
-            // Maybe story events end the turn, or maybe the player can still act.
-            // For simplicity, let's end this iteration.
+            pauseForUser();
             continue;
         }
 
-        // 3. If no story event, present default choices.
-        cout << "What would you like to do?\n";
-        cout << "[1] Move to another location\n";
-        cout << "[2] Use an item\n";
-        cout << "[3] Stay here\n";
-        cout << "[4] Inspect the location\n";
-        cout << "[5] Check status\n";
-        cout << "[6] Quit\n";
-        cout << "Enter a number: ";
-        
+        // No story event, show main menu
+        displayMainMenu();
+
         int choice;
         cin >> choice;
         if (cin.fail()) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout << "Invalid input. Try again.\n";
+            cout << "Invalid input.\n";
+            pauseForUser();
             continue;
         }
 
+        clearScreen();
+        displayLocationInfo(ryohashi);
+
         switch (choice) {
             case 1: {
-                // Move
-                cout << "Where would you like to go? Available connections:\n";
+                cout << "Available connections:\n";
                 for (const auto& conn : currentLoc->connections) {
-                    cout << "- " << conn.first << " (" << conn.second->getName() << ")\n";
+                    cout << "- " << conn.first << " -> " << conn.second->getName() << "\n";
                 }
-                cout << "Enter direction or location name: ";
-                std::string direction;
+                cout << "Enter direction: ";
+                string direction;
                 cin >> direction;
                 if (currentLoc->connections.find(direction) != currentLoc->connections.end()) {
                     ryohashi.setCurrentLocation(currentLoc->connections[direction]);
                     cout << "You move to " << ryohashi.getCurrentLocation()->getName() << ".\n";
                 } else {
-                    cout << "You can't go that way.\n";
+                    cout << "Invalid direction.\n";
                 }
+                pauseForUser();
                 break;
             }
             case 2: {
-                // Use item
                 cout << "Your inventory:\n";
                 ryohashi.displayInventory();
                 cout << "Enter item name to use (or 'cancel'): ";
-                std::string itemName;
+                string itemName;
                 cin >> itemName;
                 if (itemName != "cancel") {
-                    // You would need a method to find an item by name in player's inventory
-                    // or prompt the user with indexed choices.
-                    // For now, assume we have a method to get an item by name.
-                    // Item item = player.getItemByName(itemName);
-                    // if valid item, player.useItem(item);
+                    ryohashi.useItemByName(itemName);
                 }
+                pauseForUser();
                 break;
             }
             case 3: {
-                // Stay
-                // Potentially trigger a random event if NPC is present
-                bool npcPresent = !currentLoc->npcs.empty();
-                if (npcPresent) {
+                // Stay: random event if NPC present
+                if (!currentLoc->npcs.empty()) {
                     Event* randomEvent = eventManager.getRandomEvent();
                     if (randomEvent) {
                         randomEvent->runEvent(ryohashi);
                     } else {
-                        cout << "Nothing noteworthy happens.\n";
+                        cout << "Nothing special happens.\n";
                     }
                 } else {
-                    cout << "You linger a bit, but nothing special occurs.\n";
+                    cout << "You wait, but nothing occurs.\n";
                 }
+                pauseForUser();
                 break;
             }
             case 4: {
-                // Inspect location
                 cout << "Items at this location:\n";
                 if (currentLoc->items.empty()) {
                     cout << "No items here.\n";
@@ -198,42 +207,47 @@ int main() {
                     for (const auto& i : currentLoc->items) {
                         i.display();
                     }
-                    cout << "Enter the name of the item to pick it up, or 'none': ";
-                    std::string pickChoice;
-                    cin >> pickChoice;
-                    if (pickChoice != "none") {
-                        // Find the item, add to player's inventory, remove from location
+                    cout << "Enter the ID of the item to pick it up, or 0 for none: ";
+                    int itemId;
+                    cin >> itemId;
+
+                    if (itemId != 0) {
                         auto it = std::find_if(currentLoc->items.begin(), currentLoc->items.end(),
-                                            [&](const Item& itm){ return itm.getName() == pickChoice; });
+                                            [&](const Item& itm) { return itm.getId() == itemId; });
                         if (it != currentLoc->items.end()) {
                             ryohashi.addItem(*it);
                             currentLoc->items.erase(it);
-                            cout << "You picked up " << pickChoice << ".\n";
+                            cout << "You picked up item with ID " << itemId << ".\n";
                         } else {
-                            cout << "No such item here.\n";
+                            cout << "No item with that ID here.\n";
                         }
                     }
                 }
+                pauseForUser();
                 break;
             }
             case 5: {
                 // Check status
                 ryohashi.displayStats();
+                // Show inventory once here
+                cout << "\nYour Inventory:\n";
+                ryohashi.displayInventory();
+                pauseForUser();
                 break;
             }
-            case 6: {
+            case 6:
                 cout << "Exiting game. Goodbye!\n";
                 return 0;
-            }
             default:
                 cout << "Invalid choice.\n";
+                pauseForUser();
                 break;
         }
     }
 
+
     return 0;
 }
-
 // ARCHIVE
 //  cout << "Enter command: ";
 //         cin >> command;

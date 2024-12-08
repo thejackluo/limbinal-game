@@ -61,14 +61,49 @@ void initializeMetadata() {
     locations["City 4"] = Location("City 4", "A northern extension of the city, with towering structures and hidden secrets.");
 
     // Connect physical world locations
+    // Main House connections
     locations["Main House"].addConnection("south", &locations["Suburbs"]);
     locations["Main House"].addConnection("right", &locations["Childhood"]);
     locations["Main House"].addConnection("north", &locations["Main Town 1"]);
+
+    // Ensure return paths
+    locations["Suburbs"].addConnection("north", &locations["Main House"]);
+    locations["Childhood"].addConnection("left", &locations["Main House"]);
+
+    // Main Town connections
+    locations["Main Town 1"].addConnection("south", &locations["Main House"]);
     locations["Main Town 1"].addConnection("east", &locations["Main Town 2"]);
     locations["Main Town 1"].addConnection("north", &locations["City 3"]);
-    locations["City 3"].addConnection("west", &locations["City 1"]);
-    locations["City 3"].addConnection("east", &locations["City 2"]);
-    locations["City 3"].addConnection("north", &locations["City 4"]);
+
+    locations["Main Town 2"].addConnection("west", &locations["Main Town 1"]);
+
+    // Now form a proper matrix for the City:
+    //  City 1 --- City 2
+    //    |          |
+    //  City 3 --- City 4
+
+    // City 1 connections
+    locations["City 1"].addConnection("east", &locations["City 2"]);
+    locations["City 1"].addConnection("south", &locations["City 3"]);
+
+    // City 2 connections
+    locations["City 2"].addConnection("west", &locations["City 1"]);
+    locations["City 2"].addConnection("south", &locations["City 4"]);
+
+    // City 3 connections
+    locations["City 3"].addConnection("north", &locations["City 1"]);
+    locations["City 3"].addConnection("east", &locations["City 4"]);
+
+    // City 4 connections
+    locations["City 4"].addConnection("north", &locations["City 2"]);
+    locations["City 4"].addConnection("west", &locations["City 3"]);
+
+    // Return path from City 3 back to main world:
+    // City 3 is connected north from Main Town 1, so let's ensure:
+    // Actually, we already connected City 3 north from Main Town 1:
+    //   Main Town 1: north -> City 3
+    // Add the return path:
+    locations["City 3"].addConnection("south", &locations["Main Town 1"]);
 
     // Add NPCs to locations
     locations["Suburbs"].addNPC(yumi);
@@ -365,6 +400,169 @@ void initializeMetadata() {
             {"Nothing changes, but you grow more uneasy.", [=]() {
                 std::cout << "No immediate effect.\n";
             }}
+        },
+        {},
+        -1
+    ));
+
+    // CITY 2 STORY EVENT:
+    // Reveal more about the VR control and government's role.
+    eventManager.addEvent(Event(
+        "City 2 Surveillance",
+        Event::EventType::STORY,
+        "In City 2, silent drones hover, collecting data. You recall rumors of government officials collaborating with VR founders.",
+        {"Investigate a drone", "Hide from drones"},
+        {
+            {"You approach a drone, discovering encoded data about memory suppression. +5 MEM as you decode some hints.", [=]() {
+                std::cout << "You learn that your memories were systematically suppressed. Memory +5.\n";
+                ryohashi.modifyStats(0,0,5,0);
+            }},
+            {"You hide, learning nothing, but remain safe.\n", [=]() {}}
+        },
+        {},
+        109
+    ));
+    locations["City 2"].addEvent(*eventManager.getEvent("City 2 Surveillance"));
+
+    // CITY 4 STORY EVENT (Another step towards truth):
+    // Additional event before the final memory clue event:
+    eventManager.addEvent(Event(
+        "City 4 Echoes",
+        Event::EventType::STORY,
+        "City 4 is eerily quiet except for a faint echo of voices you once knew.",
+        {"Listen closely", "Ignore the echoes"},
+        {
+            {"You listen, hearing fragments of conversations with Yumi and Hiroto. You piece together that Kakkeda trapped you here. +5 MEM.\n", [=]() {
+                ryohashi.modifyStats(0,0,5,0);
+            }},
+            {"Ignoring them leaves you in the dark.\n", [=]() {}}
+        },
+        {},
+        110
+    ));
+    locations["City 4"].addEvent(*eventManager.getEvent("City 4 Echoes"));
+
+    // Another event that hurts the player (maybe in Childhood - a booby trap):
+    eventManager.addEvent(Event(
+        "Childhood Trap",
+        Event::EventType::STORY,
+        "While searching the Childhood area, you trip over an invisible wire. A small explosive goes off.",
+        {"Shield yourself", "Take the hit"},
+        {
+            {"You manage to shield yourself, reducing damage. -5 Health", [=]() {
+                std::cout << "You are slightly injured. Health -5.\n";
+                ryohashi.modifyStats(-5,0,0,0);
+            }},
+            {"You fail to react in time. -10 Health", [=]() {
+                std::cout << "A painful explosion. Health -10.\n";
+                ryohashi.modifyStats(-10,0,0,0);
+            }}
+        },
+        {},
+        111
+    ));
+    // Add it to Childhood location
+    locations["Childhood"].addEvent(*eventManager.getEvent("Childhood Trap"));
+
+    // More random events to expand the story:
+    // Random event that drains memory (a night terror):
+    eventManager.addEvent(Event(
+        "Night Terror",
+        Event::EventType::RANDOM,
+        "A sudden wave of anxiety and distorted visions assault your mind.",
+        {"Endure"},
+        {
+            {"Your mind struggles, losing some clarity. -5 MEM", [=]() {
+                std::cout << "Your memory fades slightly due to the terrifying vision.\n";
+                ryohashi.modifyStats(0,0,-5,0);
+            }}
+        },
+        {},
+        -1
+    ));
+
+    // Random event that gives you money:
+    eventManager.addEvent(Event(
+        "Mysterious Wallet",
+        Event::EventType::RANDOM,
+        "You find a discarded wallet on the ground.",
+        {"Pick it up"},
+        {
+            {"You gain 15 money.", [=]() {
+                std::cout << "You found some cash. +15 Money.\n";
+                ryohashi.modifyStats(0,0,0,15);
+            }}
+        },
+        {},
+        -1
+    ));
+
+    // Random event that trades health for memory:
+    eventManager.addEvent(Event(
+        "Memory Surge",
+        Event::EventType::RANDOM,
+        "A strange device hums nearby, offering to boost your memory at a cost.",
+        {"Accept", "Refuse"},
+        {
+            {"You accept, feeling a jolt. -10 Health, +10 MEM.", [=]() {
+                std::cout << "Pain shoots through your veins. Health -10, Memory +10.\n";
+                ryohashi.modifyStats(-10,0,10,0);
+            }},
+            {"You refuse, remaining unchanged.\n", [=]() {}}
+        },
+        {},
+        -1
+    ));
+
+    // Random event that drains your energy but gives health:
+    eventManager.addEvent(Event(
+        "Meditation",
+        Event::EventType::RANDOM,
+        "You sit and meditate, calming your soul but draining energy.",
+        {"Focus deeply"},
+        {
+            {"You lose 5 energy but gain 5 health.", [=]() {
+                std::cout << "A calming session. Energy -5, Health +5.\n";
+                ryohashi.modifyStats(5,-5,0,0); 
+                // Oops, we must maintain order: (healthChange, energyChange, memChange, moneyChange)
+                // Correction: ryohashi.modifyStats(+5, -5, 0, 0);
+                // Let's fix that:
+            }}
+        },
+        {},
+        -1
+    ));
+
+    // Correction to Meditation event (proper stat order):
+    // Let's remove and re-add properly:
+    eventManager.addEvent(Event(
+        "Meditation",
+        Event::EventType::RANDOM,
+        "You sit and meditate, calming your soul but draining energy.",
+        {"Focus deeply"},
+        {
+            {"A calming session. Health +5, Energy -5.",
+             [=]() {
+                 std::cout << "You feel healthier but tired. Health +5, Energy -5.\n";
+                 ryohashi.modifyStats(5, -5, 0, 0);
+             }}
+        },
+        {},
+        -1
+    ));
+
+    // Another random event where you can trade money for health:
+    eventManager.addEvent(Event(
+        "Shady Merchant",
+        Event::EventType::RANDOM,
+        "A mysterious merchant appears, offering a healing potion for 10 money.",
+        {"Buy", "Decline"},
+        {
+            {"You pay 10 money and gain 15 health.", [=]() {
+                std::cout << "You feel rejuvenated. Money -10, Health +15.\n";
+                ryohashi.modifyStats(15,0,0,-10);
+            }},
+            {"You decline, saving your money.\n", [=]() {}}
         },
         {},
         -1
