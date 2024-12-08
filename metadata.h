@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 struct Character {
     std::string name;
@@ -15,19 +16,20 @@ class Location;
 class Item;
 class People;
 class EventManager;
+class Player;
+class NPC;
 
 // External global variables
 extern std::vector<Character> characters;
-extern std::vector<Location> locations;
-extern std::vector<Item> items;
-extern std::vector<People> people;
+extern std::map<std::string, Location> locations;
+extern InventoryContainer<Item> globalInventory;
 
 // External references to specifically mentioned People
-extern People ryohashi;
-extern People yumi;
-extern People kakkeda;
-extern People hiroto;
-extern People suzumi;
+extern Player ryohashi;
+extern NPC yumi;
+extern NPC kakkeda;
+extern NPC hiroto;
+extern NPC suzumi;
 
 extern EventManager eventManager;
 

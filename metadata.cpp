@@ -1,20 +1,28 @@
 #include "metadata.h"
 #include "Item.h"
-#include "InventoryContainer.h"
 #include "Event.h"
 #include "EventManager.h"
-#include "Map.h"
 #include "Location.h"
+#include "People.h"
 #include "Player.h"
 #include "NPC.h"
 
+#include <vector>
+#include <map>
 #include <iostream>
 #include <cstdlib> // for rand()
 
-std::vector<People> characters;
-std::vector<Location> locations;
-std::vector<Item> items;
+std::vector<Character> characters;
+std::map<std::string, Location> locations; // Use map for locations
+InventoryContainer<Item> globalInventory;  // Use InventoryContainer for items
 EventManager eventManager;
+
+// Initialize Player and NPCs
+Player ryohashi("Ryohashi", 100, 50, 30, 100);
+NPC yumi("Yumi");
+NPC kakkeda("Kakkeda");
+NPC hiroto("Hiroto");
+NPC suzumi("Suzumi");
 
 void initializeMetadata() {
     /*
@@ -27,12 +35,6 @@ void initializeMetadata() {
     //     {"Kakkeda", "Antagonist", "A perfectionist with a love for VR technology and psychological experiments."},
     //     {"Hiroto", "Friend", "A realistic and paranoid individual who supports Yumi's stance on Limbo."},
     //     {"Suzumi", "Friend", "A golden ponytail girl with a mysterious background."}
-    // Define characters
-    characters.push_back(People("Ryohashi", 100, 50, 30, 100));
-    characters.push_back(People("Yumi", 50, 0, 0, 0));
-    characters.push_back(People("Kakkeda", 50, 0, 0, 0));
-    characters.push_back(People("Hiroto", 50, 0, 0, 0));
-    characters.push_back(People("Suzumi", 50, 0, 0, 0));
 
     /*
         =================================================================================
@@ -40,52 +42,43 @@ void initializeMetadata() {
         =================================================================================
     */
     // Define physical world locations
-    Location mainHouse("Main House", "The central location in the physical world.");
-    Location suburbs("Suburbs", "Located south of the main house.");
-    Location childhood("Childhood", "Located right of the main house.");
-    Location mainTown1("Main Town 1", "Located north of the main house.");
-    Location mainTown2("Main Town 2", "Located east of Main Town 1.");
-    Location city1("City 1", "Part of the city square.");
-    Location city2("City 2", "Part of the city square.");
-    Location city3("City 3", "Part of the city square.");
-    Location city4("City 4", "Part of the city square.");
+    locations["Main House"] = Location("Main House", "The central location in the physical world.");
+    locations["Suburbs"] = Location("Suburbs", "Located south of the main house.");
+    locations["Childhood"] = Location("Childhood", "Located right of the main house.");
+    locations["Main Town 1"] = Location("Main Town 1", "Located north of the main house.");
+    locations["Main Town 2"] = Location("Main Town 2", "Located east of Main Town 1.");
+    locations["City 1"] = Location("City 1", "Part of the city square.");
+    locations["City 2"] = Location("City 2", "Part of the city square.");
+    locations["City 3"] = Location("City 3", "Part of the city square.");
+    locations["City 4"] = Location("City 4", "Part of the city square.");
 
     // Connect physical world locations
-    mainHouse.addConnection("south", &suburbs);
-    mainHouse.addConnection("right", &childhood);
-    mainHouse.addConnection("north", &mainTown1);
-    mainTown1.addConnection("east", &mainTown2);
-    mainTown1.addConnection("north", &city3);
-    city3.addConnection("west", &city1);
-    city3.addConnection("east", &city2);
-    city3.addConnection("north", &city4);
+    locations["Main House"].addConnection("south", &locations["Suburbs"]);
+    locations["Main House"].addConnection("right", &locations["Childhood"]);
+    locations["Main House"].addConnection("north", &locations["Main Town 1"]);
+    locations["Main Town 1"].addConnection("east", &locations["Main Town 2"]);
+    locations["Main Town 1"].addConnection("north", &locations["City 3"]);
+    locations["City 3"].addConnection("west", &locations["City 1"]);
+    locations["City 3"].addConnection("east", &locations["City 2"]);
+    locations["City 3"].addConnection("north", &locations["City 4"]);
 
-    std::vector<Location> physicalWorld = {
-        mainHouse, suburbs, childhood, mainTown1, mainTown2, city1, city2, city3, city4
-    };
+    // Add NPCs to locations
+    // locations["Main House"].addNPC(ryohashi); // RYOHASHI IS NOT A NPC
+    locations["Suburbs"].addNPC(yumi);
+    locations["Childhood"].addNPC(kakkeda);
+    locations["Main Town 1"].addNPC(hiroto);
+    locations["Main Town 2"].addNPC(suzumi);
 
-    // Add locations to the global locations vector
-    locations.insert(locations.end(), physicalWorld.begin(), physicalWorld.end());
-
-    // Add NPCs to locations (People are treated as NPCs here)
-    locations[0].addNPC(ryohashi); // mainHouse
-    locations[1].addNPC(yumi);     // suburbs
-    locations[2].addNPC(kakkeda);  // childhood
-    locations[3].addNPC(hiroto);   // mainTown1
-    locations[4].addNPC(suzumi);   // mainTown2
-
-    
     /*
         =================================================================================
         Section 3: Items
         =================================================================================
     */
     // Initialize some items
-    items.push_back(Item(1, "Bandage", ItemType::HEALTH, 10));
-    items.push_back(Item(2, "Memory Chip", ItemType::MEM, 25));
-    items.push_back(Item(3, "Energy Drink", ItemType::ENERGY, 15));
-    items.push_back(Item(4, "Cash", ItemType::MONEY, 10));
-
+    globalInventory.addItem(Item(1, "Bandage", ItemType::HEALTH, 10));
+    globalInventory.addItem(Item(2, "Memory Chip", ItemType::MEM, 25));
+    globalInventory.addItem(Item(3, "Energy Drink", ItemType::ENERGY, 15));
+    globalInventory.addItem(Item(4, "Cash", ItemType::MONEY, 10));
 
     /*
         =================================================================================

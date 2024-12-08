@@ -26,38 +26,12 @@ int main() {
         ========================
     */
 
-    // Initialize metadata
-    initializeMetadata();
-
-    // Create a map
-    Map map;
-
-    // Create locations
-    Location* mainHouse = map.addLocation("Main House", "The central location in the physical world.");
-    Location* suburbs = map.addLocation("Suburbs", "Located south of the main house.");
-    Location* childhood = map.addLocation("Childhood", "Located right of the main house.");
-    Location* mainTown1 = map.addLocation("Main Town 1", "Located north of the main house.");
-    Location* mainTown2 = map.addLocation("Main Town 2", "Located east of Main Town 1.");
-    Location* city1 = map.addLocation("City 1", "Part of the city square.");
-    Location* city2 = map.addLocation("City 2", "Part of the city square.");
-    Location* city3 = map.addLocation("City 3", "Part of the city square.");
-    Location* city4 = map.addLocation("City 4", "Part of the city square.");
-
-    // Connect locations
-    mainHouse->addConnection("south", suburbs);
-    mainHouse->addConnection("right", childhood);
-    mainHouse->addConnection("north", mainTown1);
-    mainTown1->addConnection("east", mainTown2);
-    mainTown1->addConnection("north", city3);
-    city3->addConnection("west", city1);
-    city3->addConnection("east", city2);
-    city3->addConnection("north", city4);
+    initializeMetadata(); // Initialize metadata
 
     // Create player
     Player player("Hero", 100, 50, 0, 0);
-    player.setCurrentLocation(mainHouse);
+    player.setCurrentLocation(&locations[0]); // Assuming mainHouse is the first location
 
-   
     /*
         ========================
         Section 2: Welcome Message
@@ -112,7 +86,6 @@ int main() {
         ========================
     */
     string command;
-    EventManager eventManager;
     Event* currentEvent = nullptr;
     // set current event to the first event in the event manager
     currentEvent = eventManager.getEvent(0);
@@ -129,46 +102,51 @@ int main() {
         cout << "STORY: " << currentEvent->getMessage() << endl;
         
         cout << "=============================================" << endl;
-
-        
-        cout << "Enter command: ";
-        cin >> command;
-
-        if (command == "quit") {
-            cout << "Exiting game. Goodbye!" << endl;
-            break;
-        } else if (command == "status") {
-            player.displayStats();
-        } else if (command == "map") {
-            map.displayMap();
-        } else if (command == "inventory") {
-            player.displayInventory();
-        } else if (command == "people") {
-            // Display people's names for now
-            for (const auto& person : people) {
-                cout << person.getName() << endl;
-            }
-        } else if (command == "move") {
-            cout << "Enter location name to move: ";
-            string locationName;
-            cin >> locationName;
-            Location* newLocation = map.findLocation(locationName);
-            if (newLocation) {
-                // If player location tracking is implemented:
-                // map.movePlayer(player, newLocation);
-                cout << "Moved to " << locationName << "." << endl;
-            } else {
-                cout << "Invalid location." << endl;
-            }
-        } else {
-            cout << "Invalid command." << endl;
-        }
-
-        // Random event
+       
+        // Random event (TODO)
         Event* randomEvent = eventManager.getRandomEvent();
         if (randomEvent) {
             randomEvent->runEvent(player);
         }
+
+    }
+
+    return 0;
+}
+
+// ARCHIVE
+//  cout << "Enter command: ";
+//         cin >> command;
+
+//         if (command == "quit") {
+//             cout << "Exiting game. Goodbye!" << endl;
+//             break;
+//         } else if (command == "status") {
+//             player.displayStats();
+//         } else if (command == "map") {
+//             gameMap.displayMap();
+//         } else if (command == "inventory") {
+//             player.displayInventory();
+//         } else if (command == "people") {
+//             // Display people's names for now
+//             for (const auto& person : people) {
+//                 cout << person.getName() << endl;
+//             }
+//         } else if (command == "move") {
+//             cout << "Enter location name to move: ";
+//             string locationName;
+//             cin >> locationName;
+//             Location* newLocation = gameMap.findLocation(locationName);
+//             if (newLocation) {
+//                 // If player location tracking is implemented:
+//                 // map.movePlayer(player, newLocation);
+//                 cout << "Moved to " << locationName << "." << endl;
+//             } else {
+//                 cout << "Invalid location." << endl;
+//             }
+//         } else {
+//             cout << "Invalid command." << endl;
+//         }
 
         // Future conditions for game end:
         // if (player.getHealth() <= 0) {
@@ -183,7 +161,3 @@ int main() {
         //     cout << "You have reached City 1. Congratulations, you have found a new beginning!" << endl;
         //     break;
         // }
-    }
-
-    return 0;
-}
