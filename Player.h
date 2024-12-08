@@ -10,6 +10,7 @@ class Location;
 class Player : public People {
 public:
     Player(std::string name, int health, int energy, int mem, int money);
+    Player(const Player& other);
 
     // Inventory methods
     void addItem(const Item& item);

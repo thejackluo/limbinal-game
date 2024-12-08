@@ -20,42 +20,42 @@ By Jack Luo
 ## Topics Covered
 1. **Standard Library Containers (map, vector, etc.)**
    - **Implementation**: Used `vector` to store items in inventory and `map` for location connections.
-   - **Code Reference**: `Location.cpp` (lines 13-15), `People.cpp` (lines 64-65).
+   - **Code Reference**: `Location.cpp` (startLine: 13, endLine: 15), `People.cpp` (startLine: 64, endLine: 65).
 
 2. **Custom Template Class**
    - **Implementation**: `EventContainer` template class to manage events.
-   - **Code Reference**: `Event.cpp` (lines 11-33).
+   - **Code Reference**: `Event.cpp` (startLine: 11, endLine: 33).
 
 3. **Custom Namespace**
    - **Implementation**: Not implemented.
 
 4. **Classes with a Constructor, Destructor, Assignment Operator**
    - **Implementation**: `People` class with constructor, destructor, and assignment operator.
-   - **Code Reference**: `People.cpp` (lines 19-33).
+   - **Code Reference**: `People.cpp` (startLine: 19, endLine: 33).
 
 5. **Lambda Functions**
    - **Implementation**: Used in event resolutions to define actions.
-   - **Code Reference**: `metadata.cpp` (lines 13-17, 29-34).
+   - **Code Reference**: `metadata.cpp` (startLine: 13, endLine: 17), `metadata.cpp` (startLine: 29, endLine: 34).
 
 6. **Exception Handling**
    - **Implementation**: Used for handling invalid input during player name entry.
-   - **Code Reference**: `game.cpp` (lines 47-57).
+   - **Code Reference**: `game.cpp` (startLine: 47, endLine: 57).
 
 7. **Inheritance**
    - **Implementation**: `Player` and `NPC` classes inherit from `People`.
-   - **Code Reference**: `People.cpp` (lines 62-145).
+   - **Code Reference**: `People.cpp` (startLine: 62, endLine: 145).
 
 8. **Virtual functions or Abstract Classes**
    - **Implementation**: `displayStats` is a virtual function in `People`.
-   - **Code Reference**: `People.cpp` (lines 53-59, 94-105, 141-144).
+   - **Code Reference**: `People.cpp` (startLine: 53, endLine: 59), `People.cpp` (startLine: 94, endLine: 105), `People.cpp` (startLine: 141, endLine: 144).
 
 9. **Hashing**
    - **Implementation**: Used for event retrieval in `EventManager`.
-   - **Code Reference**: `Event.cpp` (lines 104-121).
+   - **Code Reference**: `Event.cpp` (startLine: 104, endLine: 121).
 
 10. **Sorting Algorithms**
     - **Implementation**: Sorting inventory by item ID and name.
-    - **Code Reference**: `People.cpp` (lines 107-117).
+    - **Code Reference**: `People.cpp` (startLine: 107, endLine: 117).
 
 ## Code Organization
 - **game.cpp**: Main game loop and initialization.
@@ -78,3 +78,7 @@ In the year 2030, the world has become a place where virtual reality and the rea
 - **Hiroto**: A friend of Yumi, realistic and paranoid, who supports Yumi's stance on Limbo and navigates a world under surveillance.
 - **Suzumi**: A mysterious girl with a golden ponytail, part of Ryohashi's journey.
 
+## Sources
+- https://patorjk.com/software/taag/#p=display&f=Big&t=Limbinal
+- Code Org GPT: https://chatgpt.com/share/6755494d-2d18-800f-b916-9732e534a59d
+- GUI GPT: https://chatgpt.com/share/67554964-0d20-800f-aaf9-d91f98b1f0e7

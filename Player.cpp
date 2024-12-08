@@ -4,6 +4,9 @@
 Player::Player(std::string name, int health, int energy, int mem, int money)
     : People(std::move(name), health, energy, mem, money), currentLocation(nullptr) {}
 
+Player::Player(const Player& other)
+    : People(other), inventory(other.inventory), currentLocation(other.currentLocation) {}
+
 void Player::addItem(const Item& item) { inventory.addItem(item);}
 
 void Player::removeItem(const Item& item) { inventory.removeItem(item);}
