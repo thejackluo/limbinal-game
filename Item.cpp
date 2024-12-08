@@ -41,27 +41,23 @@ void Item::display() const {
         description = "Does not affect your " + itemTypeToString(type);
     }
 
-    // Ensure the box is long enough for title and description
-    int minBoxWidth = 60; // Minimum box width for longer appearance
+    int minBoxWidth = 60; // Minimum box width
     int contentWidth = std::max<int>(name.length() + 6, description.length() + 6);
-    int boxWidth = std::max(minBoxWidth, contentWidth); // Use the longer of the two
+    int boxWidth = std::max(minBoxWidth, contentWidth); 
 
-    // Top border of the box
-    std::cout << "┌";
-    for (int i = 0; i < boxWidth; ++i) std::cout << "─";
-    std::cout << "┐\n";
+    // Top border (ASCII)
+    std::cout << "+" << std::string(boxWidth, '-') << "+\n";
 
     // Title line: [ID]. Name
     std::string title = "[" + std::to_string(id) + "]. " + name;
-    std::cout << "│ " << std::left << std::setw(boxWidth - 2) << title << "│\n";
+    std::cout << "| " << std::left << std::setw(boxWidth - 2) << title << "|\n";
 
     // Description line
-    std::cout << "│ " << std::left << std::setw(boxWidth - 2) << ("Desc: " + description) << "│\n";
+    std::string descLine = "Desc: " + description;
+    std::cout << "| " << std::left << std::setw(boxWidth - 2) << descLine << "|\n";
 
-    // Bottom border of the box
-    std::cout << "└";
-    for (int i = 0; i < boxWidth; ++i) std::cout << "─";
-    std::cout << "┘\n";
+    // Bottom border
+    std::cout << "+" << std::string(boxWidth, '-') << "+\n";
 }
 
 // Operator overloading
