@@ -10,15 +10,18 @@ class Player : public People {
 public:
     Player(std::string name, int health, int energy, int mem, int money);
 
+    // Inventory methods
     void addItem(const Item& item);
     void removeItem(const Item& item);
     void useItem(const Item& item);
-
-    void displayStats() const override;
     void displayInventory() const;
     void sortInventoryById();
     void sortInventoryByName();
 
+    // Stats methods
+    void displayStats() const override;
+
+    // Location methods (for movement)
     void setCurrentLocation(Location* location);
     Location* getCurrentLocation() const;
 
