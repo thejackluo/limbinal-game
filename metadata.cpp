@@ -1,17 +1,17 @@
-#include <vector>
-#include <string>
+#include "metadata.h"
 
-#include "Location.cpp"
-#include "Item.cpp"
-#include "Event.cpp"
-#include "People.cpp"
+// Include the relevant headers instead of the .cpp files
+#include "Location.h"
+#include "Item.h"
+#include "Event.h"
+#include "People.h"
+#include "Player.h"       // If needed
+#include "EventManager.h"
 
-struct Character {
-    std::string name;
-    std::string role;
-    std::string description;
-};
+#include <iostream>
+#include <cstdlib> // for rand()
 
+// Define the global variables declared in metadata.h
 std::vector<Character> characters = {
     {"Ryohashi", "Main Protagonist", "A socially reserved individual with a passion for technology and philosophy."},
     {"Yumi", "Deuteragonist", "A carefree girl fascinated by astrology and the stars."},
@@ -24,7 +24,7 @@ std::vector<Location> locations;
 std::vector<Item> items;
 std::vector<People> people;
 
-// Initialize people
+// Define the specific People
 People ryohashi("Ryohashi", 100, 50, 30, 100);
 People yumi("Yumi", 50, 0, 0, 0);
 People kakkeda("Kakkeda", 50, 0, 0, 0);
@@ -34,22 +34,6 @@ People suzumi("Suzumi", 50, 0, 0, 0);
 EventManager eventManager;
 
 void initializeMetadata() {
-    // // Define dream world locations
-    // Location segment1("Segment 1", "Part of the infinite street.");
-    // Location segment2("Segment 2", "Part of the infinite street.");
-    // Location segment3("Segment 3", "Part of the infinite street.");
-    // Location segment4("Segment 4", "Part of the infinite street.");
-    // Location segment5("Segment 5", "Part of the infinite street.");
-
-    // // Connect dream world segments in a circular manner
-    // segment1.addConnection("forward", &segment2);
-    // segment2.addConnection("forward", &segment3);
-    // segment3.addConnection("forward", &segment4);
-    // segment4.addConnection("forward", &segment5);
-    // segment5.addConnection("forward", &segment1);
-
-    // std::vector<Location> dreamWorld = {segment1, segment2, segment3, segment4, segment5};
-
     // Define physical world locations
     Location mainHouse("Main House", "The central location in the physical world.");
     Location suburbs("Suburbs", "Located south of the main house.");
@@ -71,7 +55,9 @@ void initializeMetadata() {
     city3.addConnection("east", &city2);
     city3.addConnection("north", &city4);
 
-    std::vector<Location> physicalWorld = {mainHouse, suburbs, childhood, mainTown1, mainTown2, city1, city2, city3, city4};
+    std::vector<Location> physicalWorld = {
+        mainHouse, suburbs, childhood, mainTown1, mainTown2, city1, city2, city3, city4
+    };
 
     // Add locations to the global locations vector
     locations.insert(locations.end(), physicalWorld.begin(), physicalWorld.end());
@@ -84,7 +70,7 @@ void initializeMetadata() {
         {"Attack"},
         { [=]() {
             int damage = rand() % 10 + 1;
-            cout << kakkeda.getName() << " attacks " << ryohashi.getName() << " for " << damage << " damage!" << endl;
+            std::cout << kakkeda.getName() << " attacks " << ryohashi.getName() << " for " << damage << " damage!" << std::endl;
             ryohashi.modifyStats(-damage, 0, 0, 0);
         }},
         {}
@@ -95,16 +81,17 @@ void initializeMetadata() {
         Event::EventType::RANDOM,
         yumi.getName() + " wants to give you something.",
         {"Accept"},
-        { [=]() {
+        {[=]() {
             int itemOrMoney = rand() % 2;
             if (itemOrMoney == 0) {
                 int amount = rand() % 20 + 1;
-                cout << yumi.getName() << " gives " << amount << " money to " << ryohashi.getName() << "!" << endl;
+                std::cout << yumi.getName() << " gives " << amount << " money to " << ryohashi.getName() << "!" << std::endl;
                 ryohashi.modifyStats(0, 0, 0, amount);
             } else {
                 Item gift(5, "Health Potion", ItemType::HEALTH, 20);
-                cout << yumi.getName() << " gives a " << gift.getName() << " to " << ryohashi.getName() << "!" << endl;
-                // ryohashi.addItem(gift);
+                std::cout << yumi.getName() << " gives a " << gift.getName() << " to " << ryohashi.getName() << "!" << std::endl;
+                // If needed, you'd have a Player class or inventory method for ryohashi.
+                // ryohashi.addItem(gift); // If ryohashi was a Player instead of People.
             }
         }},
         {}
@@ -116,27 +103,30 @@ void initializeMetadata() {
         hiroto.getName() + " has a message for you.",
         {"Listen"},
         { [=]() {
-            vector<string> messages = {
+            std::vector<std::string> messages = {
                 "Stay strong, traveler!",
                 "Beware of the cave ahead.",
                 "You can do it!",
                 "Remember to rest."
             };
             int randomIndex = rand() % messages.size();
-            cout << hiroto.getName() << " says: \"" << messages[randomIndex] << "\"" << endl;
+            std::cout << hiroto.getName() << " says: \"" << messages[randomIndex] << "\"" << std::endl;
         }},
         {}
     ));
 
-    mainHouse.addNPC(ryohashi);
-    suburbs.addNPC(yumi);
-    childhood.addNPC(kakkeda);
-    mainTown1.addNPC(hiroto);
-    mainTown2.addNPC(suzumi);
+    // Add NPCs to locations (People are treated as NPCs here)
+    // Since 'Location' stores People by value, we must ensure People is compatible
+    // If you need them as NPC or special classes, consider using NPC class or modify the approach.
+    locations[0].addNPC(ryohashi); // mainHouse
+    locations[1].addNPC(yumi);     // suburbs
+    locations[2].addNPC(kakkeda);  // childhood
+    locations[3].addNPC(hiroto);   // mainTown1
+    locations[4].addNPC(suzumi);   // mainTown2
 
-    std::vector<Item> itemContainer;
-    itemContainer.push_back(Item(1, "Bandage", ItemType::HEALTH, 10));
-    itemContainer.push_back(Item(2, "Memory Chip", ItemType::MEM, 25));
-    itemContainer.push_back(Item(3, "Energy Drink", ItemType::ENERGY, 15));
-    itemContainer.push_back(Item(4, "Cash", ItemType::MONEY, 10));
+    // Initialize some items
+    items.push_back(Item(1, "Bandage", ItemType::HEALTH, 10));
+    items.push_back(Item(2, "Memory Chip", ItemType::MEM, 25));
+    items.push_back(Item(3, "Energy Drink", ItemType::ENERGY, 15));
+    items.push_back(Item(4, "Cash", ItemType::MONEY, 10));
 }
