@@ -1,118 +1,69 @@
-using namespace std;
+#include "Event.h"
+#include "Player.h" // Must have Player definition
+#include "Item.h"    // Must have Item definition
 #include <iostream>
-#include <string>
-#include <vector>
-#include <functional>
 #include <algorithm>
 #include <unordered_map>
+#include <limits>
+#include <cstdlib>  // for rand(), if needed
 
-#include "Item.cpp"
+Event::Event(std::string name, EventType type, std::string message,
+             std::vector<std::string> choices,
+             std::vector<std::function<void()>> resolutions,
+             std::vector<SpecialEffect> effects)
+    : name(std::move(name)), type(type), message(std::move(message)),
+      choices(std::move(choices)), resolutions(std::move(resolutions)), effects(std::move(effects))
+{}
 
-class Event {
-public:
-    enum class EventType {
-        RANDOM,
-        STORY
-    };
+std::string Event::getName() const {
+    return name;
+}
 
-    struct SpecialEffect {
-        vector<int> attributeChanges; // Changes to player's attributes
-        vector<Item> items;           // Items to be added to the player
-    };
+void Event::runEvent(Player& player) const {
+    std::cout << "Event: " << name << " | Type: " 
+              << (type == EventType::RANDOM ? "Random" : "Story") << std::endl;
+    std::cout << "Message: " << message << std::endl;
 
-    Event(string name, EventType type, string message, vector<string> choices, vector<function<void()>> resolutions, vector<SpecialEffect> effects)
-        : name(name), type(type), message(message), choices(choices), resolutions(resolutions), effects(effects) {}
+    if (!choices.empty()) {
+        std::cout << "Choices: " << std::endl;
+        for (size_t i = 0; i < choices.size(); ++i) {
+            std::cout << i + 1 << ". " << choices[i] << std::endl;
+        }
 
-    string getName() const { return name; }
+        int playerChoice = getPlayerChoice();
+        std::cout << "You chose: " << choices[playerChoice - 1] << std::endl;
 
-    void runEvent(Player& player) const {
-        cout << "Event: " << name << " | Type: " << (type == EventType::RANDOM ? "Random" : "Story") << endl;
-        cout << "Message: " << message << endl;
-
-        if (!choices.empty()) {
-            cout << "Choices: " << endl;
-            for (size_t i = 0; i < choices.size(); ++i) {
-                cout << i + 1 << ". " << choices[i] << endl;
-            }
-
-            int playerChoice = getPlayerChoice();
-            cout << "You chose: " << choices[playerChoice - 1] << endl;
-
-            if (playerChoice > 0 && playerChoice <= resolutions.size()) {
-                resolutions[playerChoice - 1]();
-                if (playerChoice <= effects.size()) {
-                    applySpecialEffects(player, effects[playerChoice - 1]);
-                }
+        if (playerChoice > 0 && static_cast<size_t>(playerChoice) <= resolutions.size()) {
+            resolutions[playerChoice - 1]();
+            if (static_cast<size_t>(playerChoice) <= effects.size()) {
+                applySpecialEffects(player, effects[playerChoice - 1]);
             }
         }
     }
+}
 
-private:
-    string name;
-    EventType type;
-    string message;
-    vector<string> choices;
-    vector<function<void()>> resolutions;
-    vector<SpecialEffect> effects;
+int Event::getPlayerChoice() const {
+    int choice;
+    std::cout << "Enter your choice (1-" << choices.size() << "): ";
+    while (!(std::cin >> choice) || choice < 1 || static_cast<size_t>(choice) > choices.size()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid choice. Please enter a number between 1 and " << choices.size() << ": ";
+    }
+    return choice;
+}
 
-    int getPlayerChoice() const {
-        int choice;
-        cout << "Enter your choice (1-" << choices.size() << "): ";
-        while (!(cin >> choice) || choice < 1 || choice > choices.size()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid choice. Please enter a number between 1 and " << choices.size() << ": ";
-        }
-        return choice;
+void Event::applySpecialEffects(Player& player, const SpecialEffect& effect) const {
+    // Apply attribute changes
+    if (effect.attributeChanges.size() >= 4) {
+        player.modifyStats(effect.attributeChanges[0],
+                           effect.attributeChanges[1],
+                           effect.attributeChanges[2],
+                           effect.attributeChanges[3]);
     }
 
-    void applySpecialEffects(Player& player, const SpecialEffect& effect) const {
-        // Apply attribute changes
-        if (effect.attributeChanges.size() >= 4) {
-            player.modifyStats(effect.attributeChanges[0], effect.attributeChanges[1], effect.attributeChanges[2], effect.attributeChanges[3]);
-        }
-
-        // Add items to the player
-        for (const Item& item : effect.items) {
-            player.addItem(item);
-        }
+    // Add items to the player
+    for (const Item& item : effect.items) {
+        player.addItem(item);
     }
-};
-
-class EventManager {
-public:
-    void addEvent(const Event& event) {
-        size_t eventHash = hash<string>{}(event.getName());
-        eventMap[eventHash] = event;
-    }
-
-    void removeEvent(const string& eventName) {
-        size_t eventHash = hash<string>{}(eventName);
-        eventMap.erase(eventHash);
-    }
-
-    void displayEvents() const {
-        for (const auto& pair : eventMap) {
-            cout << "Event: " << pair.second.getName() << endl;
-        }
-    }
-
-    Event* getEvent(const string& eventName) {
-        size_t eventHash = hash<string>{}(eventName);
-        auto it = eventMap.find(eventHash);
-        if (it != eventMap.end()) {
-            return &(it->second);
-        }
-        return nullptr;
-    }
-
-    Event* getRandomEvent() {
-        if (eventMap.empty()) return nullptr;
-        auto it = eventMap.begin();
-        std::advance(it, rand() % eventMap.size());
-        return &(it->second);
-    }
-
-private:
-    unordered_map<size_t, Event> eventMap;
-};
+}
