@@ -3,6 +3,8 @@
 #include <functional> // for hash
 #include <cstdlib>    // for rand()
 
+// TODO: ensure that if the event doesn't exist, the program doesn't crash
+
 void EventManager::addEvent(const Event& event) {
     size_t eventHash = std::hash<std::string>{}(event.getName());
     eventMap[eventHash] = event;

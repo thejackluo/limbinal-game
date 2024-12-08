@@ -19,6 +19,44 @@ std::string Event::getName() const {
     return name;
 }
 
+
+std::string Event::getMessage() const {
+    return message;
+}
+
+std::vector<std::string> Event::getChoices() const {
+    return choices;
+}
+
+std::vector<std::function<void()>> Event::getResolutions() const {
+    return resolutions;
+}
+
+std::vector<Event::SpecialEffect> Event::getEffects() const {
+    return effects;
+}
+
+void Event::setName(const std::string& eventName) {
+    name = eventName;
+}
+
+void Event::setMessage(const std::string& eventMessage) {
+    message = eventMessage;
+}
+
+void Event::setChoices(const std::vector<std::string>& eventChoices) {
+    choices = eventChoices;
+}
+
+void Event::setResolutions(const std::vector<std::function<void()>>& eventResolutions) {
+    resolutions = eventResolutions;
+}
+
+void Event::setEffects(const std::vector<SpecialEffect>& eventEffects) {
+    effects = eventEffects;
+}
+
+
 void Event::runEvent(Player& player) const {
     std::cout << "Event: " << name << " | Type: " 
               << (type == EventType::RANDOM ? "Random" : "Story") << std::endl;
